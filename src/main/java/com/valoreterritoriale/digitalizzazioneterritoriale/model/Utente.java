@@ -13,11 +13,13 @@ import lombok.*;
 public class Utente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String nome;
     private String cognome;
     private String email;
     private String comune;
     private String ruolo;
     private int eta;
+    private String username;  // Aggiunto campo username
+    private String password;  // Aggiunto campo password
 }

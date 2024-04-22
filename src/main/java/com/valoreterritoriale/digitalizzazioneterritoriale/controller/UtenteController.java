@@ -14,7 +14,6 @@ public class UtenteController {
 
     private final UtenteService utenteService;
 
-    // Constructor injection
     public UtenteController(UtenteService utenteService) {
         this.utenteService = utenteService;
     }
@@ -28,13 +27,16 @@ public class UtenteController {
         utente.setComune(utenteDTO.getComune());
         utente.setRuolo(utenteDTO.getRuolo());
         utente.setEta(utenteDTO.getEta());
+        utente.setUsername(utenteDTO.getUsername());  // Imposta il campo username
+        utente.setPassword(utenteDTO.getPassword());  // Imposta il campo password
 
         utenteService.creaUtente(utente);
         return ResponseEntity.ok("Utente creato con successo");
     }
 
+
     @GetMapping("/visualizza/{id}")
-    public ResponseEntity<?> visualizzaUtente(@PathVariable Integer id) {
+    public ResponseEntity<?> visualizzaUtente(@PathVariable Long id) {
         Utente utente = utenteService.visualizzaUtente(id);
         if (utente != null) {
             return ResponseEntity.ok(utente);
@@ -44,7 +46,7 @@ public class UtenteController {
     }
 
     @PutMapping("/modifica-ruolo/{id}")
-    public ResponseEntity<?> modificaRuoloUtente(@PathVariable Integer id, @RequestBody RuoloModifica ruoloDTO) {
+    public ResponseEntity<?> modificaRuoloUtente(@PathVariable Long id, @RequestBody RuoloModifica ruoloDTO) {
         try {
             String nuovoRuolo = ruoloDTO.getNuovoRuolo();
             Utente updatedUtente = utenteService.modificaRuoloUtente(id, nuovoRuolo);
@@ -54,9 +56,8 @@ public class UtenteController {
         }
     }
 
-
     @DeleteMapping("/cancella/{id}")
-    public ResponseEntity<?> cancellaUtente(@PathVariable Integer id) {
+    public ResponseEntity<?> cancellaUtente(@PathVariable Long id) {
         boolean isDeleted = utenteService.cancellaUtente(id);
         if (isDeleted) {
             return ResponseEntity.ok("Utente cancellato con successo");

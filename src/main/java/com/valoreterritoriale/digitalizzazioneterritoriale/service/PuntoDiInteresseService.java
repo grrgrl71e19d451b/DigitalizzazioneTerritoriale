@@ -20,16 +20,18 @@ public class PuntoDiInteresseService {
     public boolean createPuntoDiInteresse(PuntoDiInteresseCrea puntoDiInteresseDTO) {
         try {
             PuntoDiInteresse puntoDiInteresse = new PuntoDiInteresse();
+            puntoDiInteresse.setNomePuntoDiInteresse(puntoDiInteresseDTO.getNomePuntoDiInteresse());  // Aggiunta del nuovo campo
             puntoDiInteresse.setDescrizione(puntoDiInteresseDTO.getDescrizione());
             puntoDiInteresse.setDataPubblicazione(puntoDiInteresseDTO.getDataPubblicazione());
             puntoDiInteresse.setPending(puntoDiInteresseDTO.isPending());
+            puntoDiInteresse.setLatitudine(puntoDiInteresseDTO.getLatitudine());
+            puntoDiInteresse.setLongitudine(puntoDiInteresseDTO.getLongitudine());
             puntoDiInteresseRepository.save(puntoDiInteresse);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
-
 
 
     public boolean deletePuntoDiInteresse(Long id) {

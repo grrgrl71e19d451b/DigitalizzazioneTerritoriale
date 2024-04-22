@@ -20,7 +20,7 @@ public class PuntoDiInteresseController {
         this.puntoDiInteresseService = puntoDiInteresseService;
     }
 
-    @PostMapping
+    @PostMapping("/crea")
     public ResponseEntity<?> createPuntoDiInteresse(@RequestBody PuntoDiInteresseCrea puntoDiInteresseDTO) {
         boolean isCreated = puntoDiInteresseService.createPuntoDiInteresse(puntoDiInteresseDTO);
         if (isCreated) {
@@ -32,7 +32,7 @@ public class PuntoDiInteresseController {
 
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/cancella/{id}")
     public ResponseEntity<?> deletePuntoDiInteresse(@PathVariable Long id) {
         boolean isDeleted = puntoDiInteresseService.deletePuntoDiInteresse(id);
         if (isDeleted) {
@@ -42,15 +42,16 @@ public class PuntoDiInteresseController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/visualizza/{id}")
     public ResponseEntity<?> getPuntoDiInteresseById(@PathVariable Long id) {
         PuntoDiInteresse puntoDiInteresse = puntoDiInteresseService.findPuntoDiInteresseById(id);
         if (puntoDiInteresse != null) {
             return ResponseEntity.ok(puntoDiInteresse);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse con ID " + id + " non trovato.");
         }
     }
+
 
     @GetMapping("/pending")
     public List<PuntoDiInteresse> getPendingPuntiDiInteresse() {
