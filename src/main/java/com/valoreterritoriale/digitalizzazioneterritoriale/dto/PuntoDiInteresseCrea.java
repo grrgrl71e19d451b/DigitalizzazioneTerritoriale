@@ -1,5 +1,6 @@
 package com.valoreterritoriale.digitalizzazioneterritoriale.dto;
 
+import com.valoreterritoriale.digitalizzazioneterritoriale.model.Utente;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -12,4 +13,5 @@ public class PuntoDiInteresseCrea {
     private boolean pending;
     private double latitudine;
     private double longitudine;
+    private Utente creatore;
 }

@@ -18,7 +18,7 @@ public class Itinerario {
 
     @ManyToOne
     @JoinColumn(name = "CREATORE_ID", referencedColumnName = "id")
-    private Utente creatore;  // Assicurati che sia mappato a CREATORE_ID
+    private Utente creatore;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(

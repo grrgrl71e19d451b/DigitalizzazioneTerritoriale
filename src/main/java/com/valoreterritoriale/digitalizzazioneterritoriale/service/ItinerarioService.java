@@ -9,6 +9,8 @@ import com.valoreterritoriale.digitalizzazioneterritoriale.repository.Itinerario
 import com.valoreterritoriale.digitalizzazioneterritoriale.repository.PuntoDiInteresseRepository;
 import com.valoreterritoriale.digitalizzazioneterritoriale.repository.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +31,18 @@ public class ItinerarioService {
         this.utenteRepository = utenteRepository;
     }
 
-    // I tuoi metodi esistenti...
 
     @Transactional
     public Itinerario creaItinerario(ItinerarioCrea itinerarioDTO) {
-        Utente creatore = utenteRepository.findById(itinerarioDTO.getIdUtente())
-                .orElseThrow(() -> new NoSuchElementException("Utente non trovato"));
+        // Ottenere l'utente loggato dal contesto di sicurezza
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Assumendo che il nome utente sia unico
+
+        // Trovare l'utente dal repository usando il nome utente
+        Utente creatore = utenteRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("Utente non trovato con username: " + username));
+
+        // Creare l'itinerario usando l'utente loggato come creatore
         Itinerario itinerario = new Itinerario();
         itinerario.setCreatore(creatore);
         itinerario.setNomeItinerario(itinerarioDTO.getNomeItinerario());
@@ -44,6 +52,7 @@ public class ItinerarioService {
 
         return itinerarioRepository.save(itinerario);
     }
+
 
     @Transactional
     public void aggiungiPoiAItinerario(PoiAItinerarioAggiungi dto) {
@@ -57,11 +66,15 @@ public class ItinerarioService {
     }
 
     @Transactional
-    public void cancellaItinerario(Long id) {
-        Itinerario itinerario = itinerarioRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Itinerario non trovato"));
-        itinerarioRepository.delete(itinerario);
+    public boolean cancellaItinerario(Long id) {
+        if (itinerarioRepository.existsById(id)) {
+            itinerarioRepository.deleteById(id);
+            return true; // Ritorna true se l'itinerario esiste ed è stato cancellato.
+        } else {
+            return false; // Ritorna false se l'itinerario non esiste.
+        }
     }
+
 
     @Transactional
     public void approvaItinerario(Long id) {
@@ -75,7 +88,7 @@ public class ItinerarioService {
         return itinerarioRepository.findByPendingTrue();
     }
 
-    public Itinerario findItinerarioById(Long id) {
+    public Itinerario visualizzaItinerarioById(Long id) {
         return itinerarioRepository.findById(id).orElse(null);
     }
 }
