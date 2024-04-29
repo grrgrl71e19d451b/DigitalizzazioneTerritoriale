@@ -11,6 +11,6 @@ public class UtenteCrea {
     private String comune;
     private String ruolo;
     private int eta;
-    private String username; // Aggiunto campo username
-    private String password; // Aggiunto campo password
+    private String username;
+    private String password;
 }

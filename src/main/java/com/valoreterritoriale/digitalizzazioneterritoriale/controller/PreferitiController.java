@@ -1,7 +1,5 @@
 package com.valoreterritoriale.digitalizzazioneterritoriale.controller;
 
-import com.valoreterritoriale.digitalizzazioneterritoriale.dto.PreferitoAggiungi;
-import com.valoreterritoriale.digitalizzazioneterritoriale.dto.PreferitoRimuovi;
 import com.valoreterritoriale.digitalizzazioneterritoriale.model.Preferito;
 import com.valoreterritoriale.digitalizzazioneterritoriale.service.PreferitiService;
 import org.springframework.http.HttpStatus;
@@ -19,10 +17,10 @@ public class PreferitiController {
         this.preferitiService = preferitiService;
     }
 
-    @PostMapping("/aggiungi")
-    public ResponseEntity<String> aggiungiPreferito(@RequestBody PreferitoAggiungi dto) {
+    @PostMapping("/aggiungi/{itinerarioId}")
+    public ResponseEntity<String> aggiungiPreferito(@PathVariable Long itinerarioId) {
         try {
-            boolean success = preferitiService.aggiungiItinerarioAiPreferiti(dto.getItinerarioId());
+            boolean success = preferitiService.aggiungiItinerarioAiPreferiti(itinerarioId);
             if (success) {
                 return ResponseEntity.ok("Preferito aggiunto con successo");
             } else {
@@ -33,10 +31,10 @@ public class PreferitiController {
         }
     }
 
-    @DeleteMapping("/rimuovi")
-    public ResponseEntity<String> rimuoviPreferito(@RequestBody PreferitoRimuovi dto) {
+    @DeleteMapping("/rimuovi/{itinerarioId}")
+    public ResponseEntity<String> rimuoviPreferito(@PathVariable Long itinerarioId) {
         try {
-            boolean success = preferitiService.rimuoviItinerarioDaiPreferiti(dto.getItinerarioId());
+            boolean success = preferitiService.rimuoviItinerarioDaiPreferiti(itinerarioId);
             if (success) {
                 return ResponseEntity.ok("Preferito rimosso con successo");
             } else {
@@ -46,6 +44,7 @@ public class PreferitiController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nella rimozione del preferito: " + e.getMessage());
         }
     }
+
     @GetMapping("/visualizza")
     public ResponseEntity<List<Preferito>> visualizzaPreferiti() {
         try {

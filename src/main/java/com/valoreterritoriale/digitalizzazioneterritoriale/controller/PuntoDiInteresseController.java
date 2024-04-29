@@ -63,7 +63,11 @@ public class PuntoDiInteresseController {
     public ResponseEntity<?> visualizzaPuntoDiInteresseById(@PathVariable Long id) {
         PuntoDiInteresse puntoDiInteresse = puntoDiInteresseService.visualizzaPuntoDiInteresseById(id);
         if (puntoDiInteresse != null) {
-            return ResponseEntity.ok(puntoDiInteresse);
+            if (!puntoDiInteresse.isPending()) {
+                return ResponseEntity.ok(puntoDiInteresse);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse con ID " + id + " è in attesa di approvazione.");
+            }
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse con ID " + id + " non trovato.");
         }

@@ -85,12 +85,14 @@ public class ItinerarioController {
     }
 
     @GetMapping("/visualizza/{id}")
-    public ResponseEntity<Itinerario> visualizzaItinerarioById(@PathVariable Long id) {
+    public ResponseEntity<?> visualizzaItinerarioById(@PathVariable Long id) {
         Itinerario itinerario = itinerarioService.visualizzaItinerarioById(id);
-        if (itinerario != null) {
+        if (itinerario != null && !itinerario.isPending()) {
             return ResponseEntity.ok(itinerario);
+        } else if (itinerario != null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Itinerario con ID " + id + " non è stato ancora approvato.");
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Itinerario con ID " + id + " non trovato.");
         }
     }
 }
