@@ -20,17 +20,16 @@ public class SecurityConfig {
         http
                 // Configurazione delle autorizzazioni delle richieste HTTP
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/punti-di-interesse/visualizza/**", "/itinerario/visualizza/**","/utente/crea", "/h2-console/**").permitAll()  // Accesso pubblico a visualizzare punti di interesse e itinerari
-                        .requestMatchers("/utente/crea").hasAnyRole("GESTOREPIATTAFORMA", "TURISTA") // Solo gestore della piattaforma e turisti possono creare utenti
-                        .requestMatchers("/utente/visualizza/**", "/utente/cancella/**", "/utente/modifica-ruolo/**").hasRole("GESTOREPIATTAFORMA") // Gestione degli utenti limitata al gestore della piattaforma
+                        .requestMatchers("/", "/home", "/punti-di-interesse/visualizza/**","/punti-di-interesse/osm-info/**", "/itinerario/visualizza/**","/utente/crea", "/h2-console/**").permitAll()  // Accesso pubblico a visualizzare punti di interesse e itinerari
+                        .requestMatchers("/utente/crea", "/utente/visualizza/**", "/utente/cancella/**", "/utente/modifica-ruolo/**").hasRole("GESTOREPIATTAFORMA")
                         .requestMatchers("/utente/richiediModificaRuolo").hasRole("CONTRIBUTORE")
                         .requestMatchers("/punti-di-interesse/crea", "/itinerario/crea","/itinerario/aggiungiPoi").hasAnyRole("CURATORE", "CONTRIBUTOREAUTORIZZATO", "CONTRIBUTORE") // Creazione di punti di interesse e itinerari limitata a curatori e contributori autorizzati
                         .requestMatchers("/itinerario/aggiungiPoi", "/punti-di-interesse/approve/**", "/itinerario/approve/**", "/punti-di-interesse/pending", "/itinerario/da-approvare").hasRole("CURATORE") // Gestione e approvazione di punti di interesse e itinerari limitata ai curatori
                         .requestMatchers("/itinerario/cancella/**", "/punti-di-interesse/cancella/**").hasAnyRole("CURATORE", "CONTRIBUTOREAUTORIZZATO") // Cancellazione limitata a curatori e contributori autorizzati
                         .requestMatchers("/preferiti/**").hasRole("TURISTAAUTENTICATO")
-                        .requestMatchers("/contest-di-contribuzione/**").hasRole("ANIMATORE")
-                        .requestMatchers("/contest-di-contribuzione/mostra/{id}").hasAnyRole("TURISTAAUTENTICATO", "CONTRIBUTORE", "CONTRIBUTOREAUTORIZZATO") // Mostra contest di contribuzione
+                        .requestMatchers("/contest-di-contribuzione/mostra/{id}").hasAnyRole("TURISTAAUTENTICATO", "CONTRIBUTORE", "CONTRIBUTOREAUTORIZZATO", "ANIMATORE") // Mostra contest di contribuzione
                         .requestMatchers("/contest-di-contribuzione/partecipaAlContest").hasAnyRole("TURISTAAUTENTICATO", "CONTRIBUTORE", "CONTRIBUTOREAUTORIZZATO") // Partecipa ai contest di contribuzione
+                        .requestMatchers("/contest-di-contribuzione/**").hasRole("ANIMATORE")
                         .anyRequest().authenticated() // Tutte le altre richieste richiedono autenticazione
                 )
                 .formLogin(form -> form

@@ -7,7 +7,6 @@ import com.valoreterritoriale.digitalizzazioneterritoriale.model.Partecipazione;
 import com.valoreterritoriale.digitalizzazioneterritoriale.model.Utente;
 import com.valoreterritoriale.digitalizzazioneterritoriale.repository.UtenteRepository;
 import com.valoreterritoriale.digitalizzazioneterritoriale.service.ContestDiContribuzioneService;
-import com.valoreterritoriale.digitalizzazioneterritoriale.service.EmailService;
 import com.valoreterritoriale.digitalizzazioneterritoriale.service.PartecipazioneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -28,15 +27,13 @@ public class ContestDiContribuzioneController {
     private final UtenteRepository utenteRepository;
     private final JavaMailSender mailSender;
     private final PartecipazioneService partecipazioneService;
-    private final EmailService emailService;
 
     @Autowired
-    public ContestDiContribuzioneController(ContestDiContribuzioneService contestService, UtenteRepository utenteRepository, JavaMailSender mailSender, EmailService emailService,PartecipazioneService partecipazioneService) {
+    public ContestDiContribuzioneController(ContestDiContribuzioneService contestService, UtenteRepository utenteRepository, JavaMailSender mailSender, PartecipazioneService partecipazioneService) {
         this.contestService = contestService;
         this.utenteRepository = utenteRepository;
         this.mailSender = mailSender;
         this.partecipazioneService = partecipazioneService;
-        this.emailService = emailService;
     }
 
     @PostMapping("/crea")
@@ -104,8 +101,6 @@ public class ContestDiContribuzioneController {
 
             byte[] fileBytes = (file != null) ? file.getBytes() : null;
             partecipazioneService.aggiungiPartecipanteAlContest(utenteAutenticato.getId(), contestId, codicePartecipazione, fileBytes);
-
-            emailService.sendContestPartecipationEmail(utenteAutenticato.getUsername(), contestId, codicePartecipazione);
 
             return ResponseEntity.ok("Partecipazione al contest confermata. Il materiale inviato è in attesa di validazione.");
         } catch (Exception e) {

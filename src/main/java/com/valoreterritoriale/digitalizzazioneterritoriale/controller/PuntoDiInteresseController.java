@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -19,11 +21,13 @@ import java.util.List;
 public class PuntoDiInteresseController {
     private final PuntoDiInteresseService puntoDiInteresseService;
     private final UtenteRepository utenteRepository;
+    private final RestTemplate restTemplate;
 
     @Autowired
-    public PuntoDiInteresseController(PuntoDiInteresseService puntoDiInteresseService, UtenteRepository utenteRepository) {
+    public PuntoDiInteresseController(PuntoDiInteresseService puntoDiInteresseService, UtenteRepository utenteRepository, RestTemplate restTemplate) {
         this.puntoDiInteresseService = puntoDiInteresseService;
         this.utenteRepository = utenteRepository;
+        this.restTemplate = restTemplate;
     }
 
     @PostMapping("/crea")
@@ -88,4 +92,29 @@ public class PuntoDiInteresseController {
         }
     }
 
+
+    @GetMapping("/osm-info/{id}")
+    public ResponseEntity<?> getOsmInfoById(@PathVariable Long id) {
+        PuntoDiInteresse puntoDiInteresse = puntoDiInteresseService.visualizzaPuntoDiInteresseById(id);
+        if (puntoDiInteresse == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse non trovato.");
+        }
+
+        if (!puntoDiInteresse.isPending()) {
+            String osmData = fetchOsmData(puntoDiInteresse.getLatitudine(), puntoDiInteresse.getLongitudine());
+            return ResponseEntity.ok(osmData);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse con ID " + id + " è in attesa di approvazione.");
+        }
+    }
+
+    private String fetchOsmData(double latitude, double longitude) {
+        String uri = UriComponentsBuilder.fromHttpUrl("https://nominatim.openstreetmap.org/reverse")
+                .queryParam("format", "json")
+                .queryParam("lat", latitude)
+                .queryParam("lon", longitude)
+                .toUriString();
+
+        return restTemplate.getForObject(uri, String.class);
+    }
 }
