@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller per la gestione degli itinerari.
+ */
 @RestController
 @RequestMapping("/itinerario")
 public class ItinerarioController {
@@ -22,21 +25,31 @@ public class ItinerarioController {
     private final ItinerarioService itinerarioService;
     private final UtenteRepository utenteRepository;
 
+    /**
+     * Costruttore con iniezione di dipendenze per il servizio degli itinerari e il repository degli utenti.
+     *
+     * @param itinerarioService Servizio per la gestione degli itinerari.
+     * @param utenteRepository Repository per la gestione degli utenti.
+     */
     @Autowired
     public ItinerarioController(ItinerarioService itinerarioService, UtenteRepository utenteRepository) {
         this.itinerarioService = itinerarioService;
         this.utenteRepository = utenteRepository;
     }
 
+    /**
+     * Endpoint per la creazione di un nuovo itinerario.
+     *
+     * @param itinerarioDTO Oggetto contenente i dati necessari per la creazione di un itinerario.
+     * @return ResponseEntity con l'itinerario creato o un messaggio di errore.
+     */
     @PostMapping("/crea")
     public ResponseEntity<Itinerario> creaItinerario(@RequestBody ItinerarioCrea itinerarioDTO) {
         try {
-            // Ottieni l'utente autenticato
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
                     .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
 
-            // Imposta il valore di pending in base al ruolo dell'utente autenticato
             boolean isPendingTrue = "CONTRIBUTORE".equals(utenteAutenticato.getRuolo());
             itinerarioDTO.setPending(isPendingTrue);
 
@@ -47,7 +60,12 @@ public class ItinerarioController {
         }
     }
 
-
+    /**
+     * Endpoint per aggiungere un Punto di Interesse (POI) a un itinerario esistente.
+     *
+     * @param dto Oggetto contenente i dati necessari per aggiungere un POI.
+     * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
+     */
     @PutMapping("/aggiungiPoi")
     public ResponseEntity<?> aggiungiPoiAItinerario(@RequestBody PoiAItinerarioAggiungi dto) {
         try {
@@ -58,6 +76,12 @@ public class ItinerarioController {
         }
     }
 
+    /**
+     * Endpoint per cancellare un itinerario esistente.
+     *
+     * @param id Identificativo dell'itinerario da cancellare.
+     * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
+     */
     @DeleteMapping("/cancella/{id}")
     public ResponseEntity<?> cancellaItinerario(@PathVariable Long id) {
         boolean isDeleted = itinerarioService.cancellaItinerario(id);
@@ -68,6 +92,12 @@ public class ItinerarioController {
         }
     }
 
+    /**
+     * Endpoint per approvare un itinerario pendente.
+     *
+     * @param id Identificativo dell'itinerario da approvare.
+     * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
+     */
     @PutMapping("/approva/{id}")
     public ResponseEntity<?> approvaItinerario(@PathVariable Long id) {
         try {
@@ -78,12 +108,23 @@ public class ItinerarioController {
         }
     }
 
+    /**
+     * Endpoint per visualizzare gli itinerari che necessitano di approvazione.
+     *
+     * @return ResponseEntity con la lista degli itinerari da approvare.
+     */
     @GetMapping("/da-approvare")
     public ResponseEntity<List<Itinerario>> visualizzaItinerariDaApprovare() {
         List<Itinerario> itinerari = itinerarioService.visualizzaItinerariDaApprovare();
         return ResponseEntity.ok(itinerari);
     }
 
+    /**
+     * Endpoint per visualizzare i dettagli di un itinerario specifico.
+     *
+     * @param id Identificativo dell'itinerario da visualizzare.
+     * @return ResponseEntity con i dettagli dell'itinerario o un messaggio di errore se non trovato o non approvato.
+     */
     @GetMapping("/visualizza/{id}")
     public ResponseEntity<?> visualizzaItinerarioById(@PathVariable Long id) {
         Itinerario itinerario = itinerarioService.visualizzaItinerarioById(id);

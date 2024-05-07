@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Modello per la rappresentazione di una partecipazione.
+ */
 @Data
 @NoArgsConstructor
 @Entity
@@ -20,12 +23,19 @@ public class Partecipazione {
     @JoinColumn(name = "contestId", referencedColumnName = "id")
     private ContestDiContribuzione contest;
 
-
     private String codicePartecipazione;
     private Boolean isValidated;
     @Lob
     private byte[] file;
 
+    /**
+     * Costruttore per la creazione di una partecipazione.
+     *
+     * @param utente                L'utente che partecipa al contest.
+     * @param contest               Il contest di contribuzione a cui partecipa l'utente.
+     * @param codicePartecipazione  Il codice univoco associato alla partecipazione.
+     * @param file                  Il file associato alla partecipazione.
+     */
     public Partecipazione(Utente utente, ContestDiContribuzione contest, String codicePartecipazione, byte[] file) {
         this.utente = utente;
         this.contest = contest;

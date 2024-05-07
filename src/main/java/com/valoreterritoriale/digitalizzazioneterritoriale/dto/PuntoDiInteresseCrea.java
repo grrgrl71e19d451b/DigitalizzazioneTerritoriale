@@ -4,6 +4,9 @@ import com.valoreterritoriale.digitalizzazioneterritoriale.model.Utente;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+/**
+ * DTO per la creazione di un punto di interesse.
+ */
 @Data
 public class PuntoDiInteresseCrea {
     private Long id;

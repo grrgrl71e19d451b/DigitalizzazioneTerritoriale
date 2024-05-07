@@ -1,0 +1,739 @@
+{
+	"info": {
+		"_postman_id": "73e1ce0a-216c-456a-bc55-c6c274199669",
+		"name": "digitalizzazione-territoriale",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32865573"
+	},
+	"item": [
+		{
+			"name": "Crea Utente",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"Giorgio\",\r\n  \"cognome\": \"Bianchi\",\r\n  \"email\": \"giorgio.biachi@example.com\",\r\n  \"comune\": \"Milano\",\r\n  \"ruolo\": \"CONTRIBUTORE\",\r\n  \"eta\": 25,\r\n  \"username\": \"giorgiocontributore\",\r\n  \"password\": \"password123\"\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/utente/crea",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utente",
+						"crea"
+					]
+				},
+				"description": "**Creazione Utente**\n\n- Ruoli autorizzati:\n    \n    - GESTOREPIATTAFORMA\n        \n    - TURISTA (utente non autenticato)\n        \n- Endpoint: `POST /utente/crea`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di GESTOREPIATTAFORMA possono creare nuovi utenti assegnando loro qualsiasi ruolo.\n        \n    - Gli utenti non autenticati (TURISTA) possono creare solo nuovi utenti con i ruoli di TURISTAAUTENTICATO o CONTRIBUTORE.\n        \n    - Per creare un nuovo utente, è necessario inviare una richiesta HTTP di tipo POST all'endpoint `/utente/crea` con i dettagli dell'utente da creare nel corpo della richiesta.\n        \n    - Se l'utente autenticato ha il ruolo di GESTOREPIATTAFORMA, può assegnare qualsiasi ruolo al nuovo utente.\n        \n    - Se l'utente non è autenticato (TURISTA), può assegnare solo i ruoli di TURISTAAUTENTICATO o CONTRIBUTORE al nuovo utente.\n        \n    - In caso di successo, viene restituito un messaggio indicante che l'utente è stato creato correttamente.\n        \n    - In caso di errore, viene restituito un messaggio di errore indicante che l'utente non è autorizzato a creare l'utente con il ruolo specificato."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza Utente",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utente/visualizza/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utente",
+						"visualizza",
+						"1"
+					]
+				},
+				"description": "**Visualizzazione Utente**\n\n- Ruolo autorizzato: GESTOREPIATTAFORMA\n    \n- Endpoint: `GET /utente/visualizza/{id}`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di GESTOREPIATTAFORMA possono visualizzare i dettagli di un utente specifico.\n        \n    - Per visualizzare i dettagli di un utente, è necessario effettuare una richiesta HTTP di tipo GET all'endpoint `/utente/visualizza/{id}`, dove `{id}` è l'identificativo univoco dell'utente.\n        \n    - In caso di successo, vengono restituiti i dettagli dell'utente richiesto.\n        \n    - Se l'utente con l'ID specificato non viene trovato, viene restituito un messaggio di errore indicante che l'utente non è stato trovato.\n        \n    - Questa funzionalità è riservata esclusivamente agli utenti con il ruolo di GESTOREPIATTAFORMA, in modo da permettere loro di gestire e visualizzare i dettagli degli utenti registrati nell'applicazione."
+			},
+			"response": []
+		},
+		{
+			"name": "CancellaUtente",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utente/cancella/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utente",
+						"cancella",
+						"1"
+					]
+				},
+				"description": "**Cancellazione Utente**\n\n- Ruolo autorizzato: GESTOREPIATTAFORMA\n    \n- Endpoint: `DELETE /utente/cancella/{id}`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di GESTOREPIATTAFORMA possono cancellare un utente esistente.\n        \n    - Per cancellare un utente, è necessario effettuare una richiesta HTTP di tipo DELETE all'endpoint `/utente/cancella/{id}`, dove `{id}` è l'identificativo univoco dell'utente da cancellare.\n        \n    - In caso di successo, viene restituito un messaggio indicante che l'utente è stato cancellato correttamente.\n        \n    - Se l'utente con l'ID specificato non viene trovato, viene restituito un messaggio di errore indicante che l'utente non è stato trovato.\n        \n    - Questa funzionalità è riservata esclusivamente agli utenti con il ruolo di GESTOREPIATTAFORMA, in modo da permettere loro di gestire e cancellare gli utenti registrati nell'applicazione."
+			},
+			"response": []
+		},
+		{
+			"name": "Modifica Ruolo Utente",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nuovoRuolo\": \"CONTRIBUTOREAUTORIZZATO\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/utente/modifica-ruolo/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utente",
+						"modifica-ruolo",
+						"1"
+					]
+				},
+				"description": "**Modifica Ruolo Utente**\n\n- Ruolo autorizzato: GESTOREPIATTAFORMA\n    \n- Endpoint: `PUT /utente/modifica-ruolo/{id}`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di GESTOREPIATTAFORMA possono modificare il ruolo di un utente esistente.\n        \n    - Per modificare il ruolo di un utente, è necessario effettuare una richiesta HTTP di tipo PUT all'endpoint `/utente/modifica-ruolo/{id}`, dove `{id}` è l'identificativo univoco dell'utente di cui si vuole modificare il ruolo.\n        \n    - Nel corpo della richiesta, deve essere inviato un oggetto contenente il nuovo ruolo da assegnare all'utente.\n        \n    - In caso di successo, viene restituito un messaggio indicante che il ruolo dell'utente è stato aggiornato correttamente.\n        \n    - Se l'utente con l'ID specificato non viene trovato, viene restituito un messaggio di errore indicante che l'utente non è stato trovato.\n        \n    - Questa funzionalità è riservata esclusivamente agli utenti con il ruolo di GESTOREPIATTAFORMA, in modo da permettere loro di gestire e modificare i ruoli degli utenti registrati nell'applicazione."
+			},
+			"response": []
+		},
+		{
+			"name": "Richiesta Modifica Ruolo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nuovoRuolo\": \"CONTRIBUTOREAUTORIZZATO\",\r\n    \"motivazione\": \"Motivazione per la richiesta di cambio ruolo\",\r\n    \"emailGestorePiattaforma\": \"digitalizzazioneterritoriale@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/utente/richiediModificaRuolo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utente",
+						"richiediModificaRuolo"
+					]
+				},
+				"description": "**Richiesta Modifica Ruolo Utente**\n\n- Ruolo autorizzato: CONTRIBUTORE\n    \n- Endpoint: `POST /utente/richiediModificaRuolo`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di CONTRIBUTORE possono inviare una richiesta per modificare il proprio ruolo.\n        \n    - Per inviare una richiesta di modifica del ruolo, è necessario effettuare una richiesta HTTP di tipo POST all'endpoint `/utente/richiediModificaRuolo` con i dettagli della richiesta nel corpo della richiesta.\n        \n    - Quando un utente CONTRIBUTORE invia questa richiesta, viene inviata una email al GESTOREPIATTAFORMA per l'approvazione della modifica del ruolo.\n        \n    - In caso di successo, viene restituito un messaggio indicante che la richiesta di modifica del ruolo è stata inviata al GESTOREPIATTAFORMA per l'approvazione.\n        \n    - Se si verifica un errore durante l'invio della richiesta, viene restituito un messaggio di errore.\n        \n    - Questa funzionalità è riservata esclusivamente agli utenti con il ruolo di CONTRIBUTORE, in modo da permettere loro di richiedere la modifica del proprio ruolo in CONTRIBUTOREAUTORIZZATO all'interno dell'applicazione."
+			},
+			"response": []
+		},
+		{
+			"name": "Crea Punto di Interesse",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nomePuntoDiInteresse\": \"Piazzetta del Podesta\",\r\n    \"descrizione\": \"Piazzetta del Podesta, Centro, Fabriano, Ancona, Marche, 60044, Italia\",\r\n    \"dataPubblicazione\": \"2024-04-18T12:00:00\",\r\n    \"latitudine\": 43.33606086256541,\r\n    \"longitudine\": 12.904531934175754\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/punti-di-interesse/crea",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"punti-di-interesse",
+						"crea"
+					]
+				},
+				"description": "**Creazione Punto di Interesse**\n\n- Ruoli autorizzati:\n    \n    - CURATORE\n        \n    - CONTRIBUTOREAUTORIZZATO\n        \n    - CONTRIBUTORE\n        \n- Endpoint: `POST /punti-di-interesse/crea`\n    \n- Descrizione:\n    \n    - Gli utenti con i ruoli di CURATORE, CONTRIBUTOREAUTORIZZATO e CONTRIBUTORE possono creare un nuovo punto di interesse.\n        \n    - Per creare un nuovo punto di interesse, è necessario inviare una richiesta HTTP di tipo POST all'endpoint `/punti-di-interesse/crea` con i dettagli del punto di interesse nel corpo della richiesta.\n        \n    - Se l'utente autenticato ha il ruolo di CONTRIBUTORE, il punto di interesse verrà creato in stato \"pending\" in attesa di approvazione da parte di un CURATORE.\n        \n    - In caso di successo, viene restituito un messaggio indicante che il punto di interesse è stato creato correttamente.\n        \n    - In caso di errore, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza Punto di Interesse",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/punti-di-interesse/visualizza/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"punti-di-interesse",
+						"visualizza",
+						"1"
+					]
+				},
+				"description": "**Visualizzazione Punto di Interesse**\n\n- Chiunque può visualizzare i dettagli di un punto di interesse approvato\n    \n- Endpoint: `GET /punti-di-interesse/visualizza/{id}`\n    \n- Descrizione:\n    \n    - Qualsiasi utente, anche non autenticato, può visualizzare i dettagli di un punto di interesse specifico.\n        \n    - Per visualizzare i dettagli di un punto di interesse, è necessario effettuare una richiesta HTTP di tipo GET all'endpoint `/punti-di-interesse/visualizza/{id}`, dove `{id}` è l'identificativo univoco del punto di interesse.\n        \n    - In caso di successo, vengono restituiti i dettagli del punto di interesse richiesto.\n        \n    - Se il punto di interesse con l'ID specificato non viene trovato, viene restituito un messaggio di errore indicante che il punto di interesse non è stato trovato."
+			},
+			"response": []
+		},
+		{
+			"name": "Cancella Punto di Interesse",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/punti-di-interesse/cancella/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"punti-di-interesse",
+						"cancella",
+						"1"
+					]
+				},
+				"description": "**Cancellazione Punto di Interesse**\n\n- Gli utenti con i ruoli di CURATORE e CONTRIBUTOREAUTORIZZATO sono autorizzati a cancellare un punto di interesse esistente.\n    \n- Per cancellare un punto di interesse, è necessario effettuare una richiesta HTTP di tipo DELETE all'endpoint `/punti-di-interesse/cancella/{id}`, dove `{id}` è l'identificativo univoco del punto di interesse da cancellare.\n    \n- In caso di successo, verrà restituito il messaggio \"Punto di interesse cancellato con successo\".\n    \n- Se il punto di interesse con l'ID specificato non viene trovato, verrà restituito il messaggio di errore \"Punto di interesse non trovato\"."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza POI pending",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/punti-di-interesse/pending",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"punti-di-interesse",
+						"pending"
+					]
+				},
+				"description": "**Visualizzazione Punti di Interesse Pending**\n\n- Ruolo autorizzato: CURATORE\n- Endpoint: `GET /punti-di-interesse/pending`\n- Descrizione:\n    \n    - Gli utenti con il ruolo di CURATORE possono visualizzare l'elenco dei punti di interesse che si trovano in stato \"pending\", ovvero in attesa di approvazione.\n    - Per visualizzare l'elenco dei punti di interesse in stato \"pending\", è necessario effettuare una richiesta HTTP di tipo GET all'endpoint `/punti-di-interesse/pending`.\n    - In risposta, viene restituito un elenco contenente i dettagli di tutti i punti di interesse che si trovano in stato \"pending\" e in attesa di approvazione da parte di un CURATORE.\n    - Questa funzionalità è riservata esclusivamente agli utenti con il ruolo di CURATORE, in modo da permettere loro di gestire e approvare i nuovi punti di interesse proposti dagli utenti con il ruolo di CONTRIBUTORE."
+			},
+			"response": []
+		},
+		{
+			"name": "Approva POI pending",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/punti-di-interesse/approve/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"punti-di-interesse",
+						"approve",
+						"1"
+					]
+				},
+				"description": "**Approvazione Punto di Interesse Pending**\n\n- Ruolo autorizzato: CURATORE\n    \n- Endpoint: `PUT /punti-di-interesse/approve/{id}`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di CURATORE possono approvare un punto di interesse che si trova in stato \"pending\", ovvero in attesa di approvazione.\n        \n    - Per approvare un punto di interesse, è necessario effettuare una richiesta HTTP di tipo PUT all'endpoint `/punti-di-interesse/approve/{id}`, dove `{id}` è l'identificativo univoco del punto di interesse da approvare.\n        \n    - In caso di successo, viene restituito un messaggio indicante che il punto di interesse è stato approvato correttamente.\n        \n    - Se si verifica un errore durante l'approvazione del punto di interesse, viene restituito un messaggio di errore.\n        \n    - Questa funzionalità è riservata esclusivamente agli utenti con il ruolo di CURATORE, in modo da permettere loro di gestire e approvare i nuovi punti di interesse proposti dagli utenti con il ruolo di CONTRIBUTORE."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza POI - OSM",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/punti-di-interesse/osm-info/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"punti-di-interesse",
+						"osm-info",
+						"1"
+					]
+				},
+				"description": "**Visualizzazione Informazioni OSM per un Punto di Interesse**\n\n  \nChiunque può visualizzare le informazioni di OpenStreetMap (OSM) relative a un punto di interesse specifico, a condizione che il punto di interesse sia stato approvato.**Endpoint**:  \n`GET /punti-di-interesse/osm-info/{id}`\n\n**Descrizione**:\n\n- Questo endpoint consente di recuperare le informazioni di OpenStreetMap (OSM) relative a un punto di interesse specifico.\n    \n- Per accedere alle informazioni OSM, è necessario effettuare una richiesta HTTP di tipo `GET` all'endpoint `/punti-di-interesse/osm-info/{id}`, dove `{id}` è l'identificativo univoco del punto di interesse.\n    \n- L'applicazione prima verifica se il punto di interesse con l'ID specificato esiste e se è stato approvato (non è in attesa di approvazione).\n    \n- Se il punto di interesse è stato approvato, l'applicazione utilizza il `RestTemplate` per effettuare una richiesta all'API di Nominatim di OpenStreetMap e recuperare i dati OSM relativi alle coordinate geografiche del punto di interesse.\n    \n- I dati OSM recuperati vengono quindi restituiti come risposta all'utente.\n    \n- Se il punto di interesse con l'ID specificato non viene trovato, viene restituito un messaggio di errore indicante che il punto di interesse non è stato trovato.\n    \n- Se il punto di interesse è in attesa di approvazione, viene restituito un messaggio di errore indicante che il punto di interesse non è ancora stato approvato."
+			},
+			"response": []
+		},
+		{
+			"name": "Crea Itinerario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nomeItinerario\": \"Itinerario di Prova\",\r\n    \"descrizione\": \"Questo è un itinerario di prova\",\r\n    \"dataPubblicazione\": \"2023-04-23T12:00:00\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/itinerario/crea",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"itinerario",
+						"crea"
+					]
+				},
+				"description": "**Creazione Itinerario**\n\n- Ruoli autorizzati:\n    \n    - CURATORE\n        \n    - CONTRIBUTOREAUTORIZZATO\n        \n    - CONTRIBUTORE\n        \n- Endpoint: `POST /itinerario/crea`\n    \n- Descrizione:\n    \n    - Gli utenti con i ruoli di CURATORE, CONTRIBUTOREAUTORIZZATO e CONTRIBUTORE possono creare un nuovo itinerario.\n        \n    - Per creare un nuovo itinerario, è necessario inviare una richiesta HTTP di tipo POST all'endpoint `/itinerario/crea` con i dettagli dell'itinerario nel corpo della richiesta.\n        \n    - Se l'utente autenticato ha il ruolo di CONTRIBUTORE, l'itinerario verrà creato in stato \"pending\" in attesa di approvazione da parte di un CURATORE.\n        \n    - In caso di successo, viene restituito l'itinerario appena creato.\n        \n    - In caso di errore, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza Itinerario",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/itinerario/visualizza/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"itinerario",
+						"visualizza",
+						"1"
+					]
+				},
+				"description": "**Visualizzazione Itinerario**\n\n- Chiunque può visualizzare i dettagli di un itinerario approvato.\n    \n- Endpoint: `GET /itinerario/visualizza/{id}`\n- Descrizione:\n    - Qualsiasi utente, anche non autenticato, può visualizzare i dettagli di un itinerario specifico.\n    - Per visualizzare i dettagli di un itinerario, è necessario effettuare una richiesta HTTP di tipo GET all'endpoint `/itinerario/visualizza/{id}`, dove `{id}` è l'identificativo univoco dell'itinerario.\n    - In caso di successo, vengono restituiti i dettagli dell'itinerario richiesto.\n    - Se l'itinerario con l'ID specificato non viene trovato, viene restituito un messaggio di errore indicante che l'itinerario non è stato trovato."
+			},
+			"response": []
+		},
+		{
+			"name": "Cancella Itinerario",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/itinerario/cancella/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"itinerario",
+						"cancella",
+						"1"
+					]
+				},
+				"description": "**Cancellazione Itinerario**\n\n- Ruoli autorizzati:\n    \n    - CURATORE\n        \n    - CONTRIBUTOREAUTORIZZATO\n        \n- Endpoint: `DELETE /itinerario/cancella/{id}`\n    \n- Descrizione:\n    \n    - Gli utenti con i ruoli di CURATORE e CONTRIBUTOREAUTORIZZATO possono cancellare un itinerario esistente.\n        \n    - Per cancellare un itinerario, è necessario effettuare una richiesta HTTP di tipo DELETE all'endpoint `/itinerario/cancella/{id}`, dove `{id}` è l'identificativo univoco dell'itinerario da cancellare.\n        \n    - In caso di successo, viene restituito un messaggio indicante che l'itinerario è stato cancellato correttamente.\n        \n    - Se l'itinerario con l'ID specificato non viene trovato, viene restituito un messaggio di errore indicante che l'itinerario non è stato trovato."
+			},
+			"response": []
+		},
+		{
+			"name": "Aggiungi POI a Itinerario",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"idItinerario\": 1,\r\n  \"idPuntoDiInteresse\": 1\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/itinerario/aggiungiPoi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"itinerario",
+						"aggiungiPoi"
+					]
+				},
+				"description": "**Aggiunta POI a Itinerario**\n\n- Ruolo autorizzato: CURATORE\n    \n- Endpoint: `PUT /itinerario/aggiungiPoi`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di CURATORE possono aggiungere un punto di interesse (POI) a un itinerario esistente.\n        \n    - Per aggiungere un POI a un itinerario, è necessario effettuare una richiesta HTTP di tipo PUT all'endpoint `/itinerario/aggiungiPoi` con i dettagli del POI e dell'itinerario nel corpo della richiesta.\n        \n    - In caso di successo, viene restituito un messaggio indicante che il POI è stato aggiunto all'itinerario correttamente.\n        \n    - Se si verifica un errore durante l'aggiunta del POI all'itinerario, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza Itinerari pending",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/itinerario/da-approvare",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"itinerario",
+						"da-approvare"
+					]
+				},
+				"description": "**Visualizzazione Itinerari Pending**\n\n- Ruolo autorizzato: CURATORE\n    \n- Endpoint: `GET /itinerario/da-approvare`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di CURATORE possono visualizzare l'elenco degli itinerari che si trovano in stato \"pending\", ovvero in attesa di approvazione.\n        \n    - Per visualizzare l'elenco degli itinerari in stato \"pending\", è necessario effettuare una richiesta HTTP di tipo GET all'endpoint `/itinerario/da-approvare`.\n        \n    - In risposta, viene restituito un elenco contenente i dettagli di tutti gli itinerari che si trovano in stato \"pending\" e in attesa di approvazione da parte di un CURATORE.\n        \n    - Questa funzionalità è riservata esclusivamente agli utenti con il ruolo di CURATORE, in modo da permettere loro di gestire e approvare i nuovi itinerari proposti dagli utenti con il ruolo di CONTRIBUTORE."
+			},
+			"response": []
+		},
+		{
+			"name": "Approva Itinerario pending",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/itinerario/approva/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"itinerario",
+						"approva",
+						"1"
+					]
+				},
+				"description": "**Approvazione Itinerario Pending**\n\n- Ruolo autorizzato: CURATORE\n    \n- Endpoint: `PUT /itinerario/approva/{id}`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di CURATORE possono approvare un itinerario che si trova in stato \"pending\", ovvero in attesa di approvazione.\n        \n    - Per approvare un itinerario, è necessario effettuare una richiesta HTTP di tipo PUT all'endpoint `/itinerario/approva/{id}`, dove `{id}` è l'identificativo univoco dell'itinerario da approvare.\n        \n    - In caso di successo, viene restituito un messaggio indicante che l'itinerario è stato approvato correttamente.\n        \n    - Se si verifica un errore durante l'approvazione dell'itinerario, viene restituito un messaggio di errore.\n        \n    - Questa funzionalità è riservata esclusivamente agli utenti con il ruolo di CURATORE, in modo da permettere loro di gestire e approvare i nuovi itinerari proposti dagli utenti con il ruolo di CONTRIBUTORE."
+			},
+			"response": []
+		},
+		{
+			"name": "Aggiungi Itinerario Preferiti",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/preferiti/aggiungi/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"preferiti",
+						"aggiungi",
+						"1"
+					]
+				},
+				"description": "**Aggiunta Itinerario ai Preferiti**\n\n- Ruolo autorizzato: TURISTAAUTENTICATO\n- Endpoint: `POST /preferiti/aggiungi/{itinerarioId}`\n- Descrizione:\n    - Gli utenti con il ruolo di TURISTAAUTENTICATO possono aggiungere un itinerario ai loro preferiti.\n    - Per aggiungere un itinerario ai preferiti, è necessario effettuare una richiesta HTTP di tipo POST all'endpoint `/preferiti/aggiungi/{itinerarioId}`, dove `{itinerarioId}` è l'identificativo univoco dell'itinerario da aggiungere.\n    - In caso di successo, viene restituito un messaggio indicante che il preferito è stato aggiunto correttamente.\n    - Se si verifica un errore durante l'aggiunta del preferito, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Cancella Itinerario Preferito",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/preferiti/rimuovi/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"preferiti",
+						"rimuovi",
+						"1"
+					]
+				},
+				"description": "**Rimozione Itinerario dai Preferiti**\n\n- Ruolo autorizzato: TURISTAAUTENTICATO\n    \n- Endpoint: `DELETE /preferiti/rimuovi/{itinerarioId}`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di TURISTAAUTENTICATO possono rimuovere un itinerario dai loro preferiti.\n        \n    - Per rimuovere un itinerario dai preferiti, è necessario effettuare una richiesta HTTP di tipo DELETE all'endpoint `/preferiti/rimuovi/{itinerarioId}`, dove `{itinerarioId}` è l'identificativo univoco dell'itinerario da rimuovere.\n        \n    - In caso di successo, viene restituito un messaggio indicante che il preferito è stato rimosso correttamente.\n        \n    - Se si verifica un errore durante la rimozione del preferito, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza Itinerario Preferito",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/preferiti/visualizza",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"preferiti",
+						"visualizza"
+					]
+				},
+				"description": "**Visualizzazione Preferiti**\n\n- Ruolo autorizzato: TURISTAAUTENTICATO\n    \n- Endpoint: `GET /preferiti/visualizza`\n    \n- Descrizione:\n    \n    - Gli utenti con il ruolo di TURISTAAUTENTICATO possono visualizzare l'elenco dei loro preferiti.\n        \n    - Per visualizzare l'elenco dei preferiti, è necessario effettuare una richiesta HTTP di tipo GET all'endpoint `/preferiti/visualizza`.\n        \n    - In risposta, viene restituito un elenco contenente i dettagli di tutti gli itinerari aggiunti ai preferiti dall'utente autenticato."
+			},
+			"response": []
+		},
+		{
+			"name": "Aggiungi Contest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"Nome del Contest\",\r\n  \"descrizione\": \"Descrizione del Contest\",\r\n  \"dataEvento\": \"2024-04-23T18:25:43.511Z\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/contest-di-contribuzione/crea",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contest-di-contribuzione",
+						"crea"
+					]
+				},
+				"description": "**Creazione Contest di Contribuzione**\n\n- Ruolo autorizzato: ANIMATORE\n- Endpoint: `POST /contest-di-contribuzione/crea`\n- Descrizione:\n    - Gli utenti con il ruolo di ANIMATORE possono creare un nuovo contest di contribuzione.\n    - Per creare un nuovo contest, è necessario inviare una richiesta HTTP di tipo POST all'endpoint `/contest-di-contribuzione/crea` con i dettagli del contest nel corpo della richiesta.\n    - L'utente autenticato che crea il contest viene impostato come il creatore del contest.\n    - In caso di successo, viene restituito un messaggio indicante che il contest di contribuzione è stato creato correttamente.\n    - In caso di errore, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza Contest",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/contest-di-contribuzione/mostra/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contest-di-contribuzione",
+						"mostra",
+						"1"
+					]
+				},
+				"description": "**Visualizzazione Contest di Contribuzione.**\n\nRuoli autorizzati: TURISTAAUTENTICATO, CONTRIBUTORE, CONTRIBUTOREAUTORIZZATO, ANIMATORE**.**\n\nEndpoint: GET /contest-di-contribuzione/mostra/{id}**.**\n\nDescrizione:\n\n- Gli utenti con i ruoli di TURISTAAUTENTICATO, CONTRIBUTORE, CONTRIBUTOREAUTORIZZATO e ANIMATORE possono visualizzare i dettagli di un contest di contribuzione.\n    \n- Per visualizzare i dettagli di un contest, è necessario inviare una richiesta HTTP di tipo GET all'endpoint /contest-di-contribuzione/mostra/{id}, dove {id} è l'ID del contest che si desidera visualizzare.\n    \n- In caso di successo, viene restituito un oggetto ContestDiContribuzione contenente i dettagli del contest.\n    \n- In caso di errore, ad esempio se il contest non viene trovato, viene restituito un codice di stato HTTP 404 Not Found."
+			},
+			"response": []
+		},
+		{
+			"name": "Cancella Contest",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/contest-di-contribuzione/cancella/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contest-di-contribuzione",
+						"cancella",
+						"1"
+					]
+				},
+				"description": "**Cancellazione Contest di Contribuzione.**\n\nRuoli autorizzati: ANIMATORE**.**\n\nEndpoint: DELETE /contest-di-contribuzione/cancella/{id}**.**\n\nDescrizione:\n\n- Gli utenti con il ruolo di ANIMATORE possono cancellare un contest di contribuzione.\n    \n- Per cancellare un contest, è necessario inviare una richiesta HTTP di tipo DELETE all'endpoint /contest-di-contribuzione/cancella/{id}, dove {id} è l'ID del contest che si desidera cancellare.\n    \n- In caso di successo, viene restituita una risposta HTTP 200 OK.\n    \n- In caso di errore, ad esempio se il contest non viene trovato, viene restituito un codice di stato HTTP appropriato."
+			},
+			"response": []
+		},
+		{
+			"name": "Invita Utente al Contest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Mario Rossi\",\r\n    \"email\": \"digitalizzazioneterritoriale@gmail.com\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/contest-di-contribuzione/invita/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contest-di-contribuzione",
+						"invita",
+						"1"
+					]
+				},
+				"description": "**Invito Utenti a Contest di Contribuzione.**\n\nRuoli autorizzati: ANIMATORE**.**\n\nEndpoint: POST /contest-di-contribuzione/invita/{contestId}**.**\n\nDescrizione:\n\n- Gli utenti con il ruolo di ANIMATORE possono invitare altri utenti a partecipare a un contest di contribuzione.\n    \n- Per invitare un utente, è necessario inviare una richiesta HTTP di tipo POST all'endpoint /contest-di-contribuzione/invita/{contestId}, dove {contestId} è l'ID del contest a cui si vuole invitare l'utente.\n    \n- Nel corpo della richiesta, è necessario fornire i dettagli dell'utente da invitare, come email e nome.\n    \n- In caso di successo, viene inviata una email all'utente invitato con i dettagli del contest e un codice di partecipazione.\n    \n- In caso di errore, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Partecipa al Contest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "contestId",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "codicePartecipazione",
+							"value": "XYZ123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/contest-di-contribuzione/partecipaAlContest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contest-di-contribuzione",
+						"partecipaAlContest"
+					]
+				},
+				"description": "**Partecipazione a Contest di Contribuzione.**\n\nRuoli autorizzati**:** TURISTAAUTENTICATO, CONTRIBUTORE, CONTRIBUTOREAUTORIZZATO**.**\n\nEndpoint: POST /contest-di-contribuzione/partecipaAlContest**.**\n\nDescrizione:\n\n- Gli utenti con i ruoli di TURISTAAUTENTICATO, CONTRIBUTORE e CONTRIBUTOREAUTORIZZATO possono partecipare a un contest di contribuzione.\n    \n- Per partecipare a un contest, è necessario inviare una richiesta HTTP di tipo POST all'endpoint /contest-di-contribuzione/partecipaAlContest.\n    \n- Nella richiesta, è necessario fornire l'ID del contest a cui si vuole partecipare e il codice di partecipazione ricevuto tramite email.\n    \n- È possibile allegare un file (ad esempio, un contributo) insieme alla richiesta di partecipazione.\n    \n- In caso di successo, viene restituita una conferma della partecipazione e il materiale inviato viene messo in attesa di validazione.\n    \n- In caso di errore, ad esempio se il codice di partecipazione non è valido, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Visualizza Partecipazioni al Contest",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/contest-di-contribuzione/visionaMaterialePartecipanti/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contest-di-contribuzione",
+						"visionaMaterialePartecipanti",
+						"1"
+					]
+				},
+				"description": "**Visualizzazione Partecipazioni a Contest di Contribuzione.**\n\nRuoli autorizzati: ANIMATORE**.**\n\nEndpoint: GET /contest-di-contribuzione/visionaMaterialePartecipanti/{contestId}**.**\n\nDescrizione:\n\n- Gli utenti con il ruolo di ANIMATORE possono visualizzare il materiale inviato dai partecipanti a un contest di contribuzione.\n    \n- Per visualizzare le partecipazioni, è necessario inviare una richiesta HTTP di tipo GET all'endpoint /contest-di-contribuzione/visionaMaterialePartecipanti/{contestId}, dove {contestId} è l'ID del contest di cui si vogliono visualizzare le partecipazioni.\n    \n- In caso di successo, viene restituito un elenco di oggetti Partecipazione contenenti i dettagli delle partecipazioni, inclusi i file allegati.\n    \n- In caso di errore, ad esempio se il contest non viene trovato, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Approva Partecipazione al Contest",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/contest-di-contribuzione/approvaPartecipazione/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"contest-di-contribuzione",
+						"approvaPartecipazione",
+						"1"
+					]
+				},
+				"description": "**Approvazione Partecipazioni a Contest di Contribuzione.**\n\nRuoli autorizzati: ANIMATORE**.**\n\nEndpoint: PUT /contest-di-contribuzione/approvaPartecipazione/{partecipazioneId}**.**\n\nDescrizione:\n\n- Gli utenti con il ruolo di ANIMATORE possono approvare le partecipazioni a un contest di contribuzione.\n    \n- Per approvare una partecipazione, è necessario inviare una richiesta HTTP di tipo PUT all'endpoint /contest-di-contribuzione/approvaPartecipazione/{partecipazioneId}, dove {partecipazioneId} è l'ID della partecipazione da approvare.\n    \n- In caso di successo, viene restituita una conferma dell'avvenuta approvazione della partecipazione.\n    \n- In caso di errore, ad esempio se la partecipazione non viene trovata, viene restituito un messaggio di errore."
+			},
+			"response": []
+		},
+		{
+			"name": "Login Utente",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "giorgiocontributore\n",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				},
+				"description": "**Login Utente.**\n\nEndpoint: POST /login**.**\n\nDescrizione:\n\n- Gli utenti possono effettuare il login al sistema.\n    \n- Per effettuare il login, è necessario inviare una richiesta HTTP di tipo POST all'endpoint /login, con le credenziali di accesso (username e password) nel corpo della richiesta.\n    \n- In caso di login corretto, viene restituita una risposta HTTP 200 OK e un messaggio di conferma del login viene memorizzato nella sessione dell'utente.\n    \n- In caso di credenziali non valide, viene restituita una risposta HTTP 401 Unauthorized e un messaggio di errore viene memorizzato nella sessione dell'utente."
+			},
+			"response": []
+		},
+		{
+			"name": "Logout Utente",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"logout"
+					]
+				},
+				"description": "**Logout Utente.**\n\nEndpoint: POST /logout**.**\n\nDescrizione:\n\n- Gli utenti possono effettuare il logout dal sistema.\n    \n- Per effettuare il logout, è necessario inviare una richiesta HTTP di tipo POST all'endpoint /logout.\n    \n- In caso di logout corretto, viene restituita una risposta HTTP 200 OK e un messaggio di conferma del logout viene memorizzato nell'attributo della richiesta.\n    \n- La sessione dell'utente viene invalidata e l'autenticazione viene rimossa."
+			},
+			"response": []
+		}
+	]
+}

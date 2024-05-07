@@ -13,18 +13,35 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servizio per la gestione degli itinerari preferiti degli utenti.
+ */
 @Service
 public class PreferitiService {
     private final PreferitiRepository preferitiRepository;
     private final ItinerarioRepository itinerarioRepository;
     private final UtenteRepository utenteRepository;
 
+    /**
+     * Costruttore per iniezione delle dipendenze dei repository necessari.
+     *
+     * @param preferitiRepository Repository per la gestione dei preferiti.
+     * @param itinerarioRepository Repository per la gestione degli itinerari.
+     * @param utenteRepository Repository per la gestione degli utenti.
+     */
     public PreferitiService(PreferitiRepository preferitiRepository, ItinerarioRepository itinerarioRepository, UtenteRepository utenteRepository) {
         this.preferitiRepository = preferitiRepository;
         this.itinerarioRepository = itinerarioRepository;
         this.utenteRepository = utenteRepository;
     }
 
+    /**
+     * Aggiunge un itinerario alla lista dei preferiti di un utente.
+     *
+     * @param itinerarioId Identificativo dell'itinerario da aggiungere ai preferiti.
+     * @return true se l'itinerario è stato aggiunto con successo.
+     * @throws IllegalArgumentException se l'utente o l'itinerario non sono trovati.
+     */
     public boolean aggiungiItinerarioAiPreferiti(Long itinerarioId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -39,6 +56,13 @@ public class PreferitiService {
         return true;
     }
 
+    /**
+     * Rimuove un itinerario dalla lista dei preferiti di un utente.
+     *
+     * @param itinerarioId Identificativo dell'itinerario da rimuovere dai preferiti.
+     * @return true se l'itinerario è stato rimosso con successo, false se non è presente nella lista dei preferiti.
+     * @throws IllegalArgumentException se l'utente o l'itinerario non sono trovati.
+     */
     public boolean rimuoviItinerarioDaiPreferiti(Long itinerarioId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -56,6 +80,12 @@ public class PreferitiService {
         return false;
     }
 
+    /**
+     * Restituisce la lista degli itinerari preferiti dell'utente autenticato.
+     *
+     * @return Lista dei preferiti dell'utente.
+     * @throws IllegalArgumentException se l'utente non è trovato.
+     */
     public List<Preferito> visualizzaPreferiti() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -64,6 +94,5 @@ public class PreferitiService {
 
         return preferitiRepository.findByUtente(utente);
     }
-
 
 }

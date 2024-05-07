@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
+/**
+ * Controller per la gestione degli utenti.
+ */
 @RestController
 @RequestMapping("/utente")
 public class UtenteController {
@@ -22,11 +25,22 @@ public class UtenteController {
     private final UtenteService utenteService;
     private final EmailService emailService;
 
+    /**
+     * Costruttore della classe UtenteController.
+     * @param utenteService servizio per la gestione degli utenti.
+     * @param emailService servizio per l'invio di email.
+     */
     public UtenteController(UtenteService utenteService, EmailService emailService) {
         this.utenteService = utenteService;
         this.emailService = emailService;
     }
 
+    /**
+     * Metodo per creare un nuovo utente.
+     * @param utenteCrea oggetto UtenteCrea contenente i dettagli dell'utente da creare.
+     * @param authentication informazioni sull'autenticazione dell'utente.
+     * @return ResponseEntity con il risultato dell'operazione.
+     */
     @PostMapping("/crea")
     public ResponseEntity<?> creaUtente(@RequestBody UtenteCrea utenteCrea, Authentication authentication) {
         Utente utente = new Utente();
@@ -39,20 +53,16 @@ public class UtenteController {
         utente.setPassword(utenteCrea.getPassword());
 
         if (authentication != null && authentication.isAuthenticated()) {
-            // Controlla il ruolo dell'utente autenticato
             String ruoloAutenticato = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.joining());
 
             if (ruoloAutenticato.contains("GESTOREPIATTAFORMA")) {
-                // Solo GESTOREPIATTAFORMA può creare utenti con qualsiasi ruolo
                 utente.setRuolo(utenteCrea.getRuolo());
             } else {
-                // Altri ruoli autenticati non possono creare utenti
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non autorizzato a creare utenti");
             }
         } else {
-            // Utente non loggato: può creare solo utenti TURISTAAUTENTICATO o CONTRIBUTORE
             if (utenteCrea.getRuolo().equals("TURISTAAUTENTICATO") || utenteCrea.getRuolo().equals("CONTRIBUTORE")) {
                 utente.setRuolo(utenteCrea.getRuolo());
             } else {
@@ -64,6 +74,11 @@ public class UtenteController {
         return ResponseEntity.ok("Utente creato con successo");
     }
 
+    /**
+     * Metodo per inviare una richiesta di modifica del ruolo.
+     * @param richiestaModificaRuolo oggetto RichiestaModificaRuolo contenente i dettagli della richiesta.
+     * @return ResponseEntity con il risultato dell'operazione.
+     */
     @PostMapping("/richiediModificaRuolo")
     public ResponseEntity<String> richiediModificaRuolo(@RequestBody RichiestaModificaRuolo richiestaModificaRuolo) {
         try {
@@ -78,6 +93,11 @@ public class UtenteController {
         }
     }
 
+    /**
+     * Metodo per visualizzare i dettagli di un utente.
+     * @param id l'ID dell'utente da visualizzare.
+     * @return ResponseEntity con l'utente o un messaggio di errore se non trovato.
+     */
     @GetMapping("/visualizza/{id}")
     public ResponseEntity<?> visualizzaUtente(@PathVariable Long id) {
         Utente utente = utenteService.visualizzaUtente(id);
@@ -88,6 +108,12 @@ public class UtenteController {
         }
     }
 
+    /**
+     * Metodo per modificare il ruolo di un utente.
+     * @param id l'ID dell'utente da modificare.
+     * @param ruoloModifica oggetto RuoloModifica contenente il nuovo ruolo.
+     * @return ResponseEntity con il risultato dell'operazione.
+     */
     @PutMapping("/modifica-ruolo/{id}")
     public ResponseEntity<?> modificaRuoloUtente(@PathVariable Long id, @RequestBody RuoloModifica ruoloModifica) {
         try {
@@ -99,6 +125,11 @@ public class UtenteController {
         }
     }
 
+    /**
+     * Metodo per cancellare un utente.
+     * @param id l'ID dell'utente da cancellare.
+     * @return ResponseEntity con il risultato dell'operazione.
+     */
     @DeleteMapping("/cancella/{id}")
     public ResponseEntity<?> cancellaUtente(@PathVariable Long id) {
         boolean isDeleted = utenteService.cancellaUtente(id);

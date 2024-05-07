@@ -17,32 +17,44 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Servizio per la gestione degli itinerari, inclusa la creazione e modifica.
+ */
 @Service
 public class ItinerarioService {
 
     private final ItinerarioRepository itinerarioRepository;
     private final PuntoDiInteresseRepository puntoDiInteresseRepository;
-    private final UtenteRepository utenteRepository;  // Aggiunto campo per UtenteRepository
+    private final UtenteRepository utenteRepository;
 
-    @Autowired  // Costruttore modificato per iniettare anche UtenteRepository
+    /**
+     * Costruttore per iniezione delle dipendenze dei repository necessari.
+     *
+     * @param itinerarioRepository Repository per Itinerario.
+     * @param puntoDiInteresseRepository Repository per Punto di Interesse.
+     * @param utenteRepository Repository per Utente.
+     */
+    @Autowired
     public ItinerarioService(ItinerarioRepository itinerarioRepository, PuntoDiInteresseRepository puntoDiInteresseRepository, UtenteRepository utenteRepository) {
         this.itinerarioRepository = itinerarioRepository;
         this.puntoDiInteresseRepository = puntoDiInteresseRepository;
         this.utenteRepository = utenteRepository;
     }
 
-
+    /**
+     * Crea un nuovo itinerario basato sui dati forniti.
+     *
+     * @param itinerarioDTO I dati per creare l'itinerario.
+     * @return L'itinerario appena creato e salvato.
+     */
     @Transactional
     public Itinerario creaItinerario(ItinerarioCrea itinerarioDTO) {
-        // Ottenere l'utente loggato dal contesto di sicurezza
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // Assumendo che il nome utente sia unico
+        String username = authentication.getName();
 
-        // Trovare l'utente dal repository usando il nome utente
         Utente creatore = utenteRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("Utente non trovato con username: " + username));
 
-        // Creare l'itinerario usando l'utente loggato come creatore
         Itinerario itinerario = new Itinerario();
         itinerario.setCreatore(creatore);
         itinerario.setNomeItinerario(itinerarioDTO.getNomeItinerario());
@@ -53,7 +65,11 @@ public class ItinerarioService {
         return itinerarioRepository.save(itinerario);
     }
 
-
+    /**
+     * Aggiunge un punto di interesse a un itinerario esistente.
+     *
+     * @param dto I dati necessari per aggiungere il punto all'itinerario.
+     */
     @Transactional
     public void aggiungiPoiAItinerario(PoiAItinerarioAggiungi dto) {
         Itinerario itinerario = itinerarioRepository.findById((long) dto.getIdItinerario())
@@ -65,17 +81,27 @@ public class ItinerarioService {
         itinerarioRepository.save(itinerario);
     }
 
+    /**
+     * Elimina un itinerario esistente.
+     *
+     * @param id L'identificativo dell'itinerario da eliminare.
+     * @return true se l'itinerario esiste ed è stato eliminato, false altrimenti.
+     */
     @Transactional
     public boolean cancellaItinerario(Long id) {
         if (itinerarioRepository.existsById(id)) {
             itinerarioRepository.deleteById(id);
-            return true; // Ritorna true se l'itinerario esiste ed è stato cancellato.
+            return true;
         } else {
-            return false; // Ritorna false se l'itinerario non esiste.
+            return false;
         }
     }
 
-
+    /**
+     * Approva un itinerario pendente, rendendolo disponibile a tutti gli utenti.
+     *
+     * @param id L'identificativo dell'itinerario da approvare.
+     */
     @Transactional
     public void approvaItinerario(Long id) {
         Itinerario itinerario = itinerarioRepository.findById(id)
@@ -84,10 +110,21 @@ public class ItinerarioService {
         itinerarioRepository.save(itinerario);
     }
 
+    /**
+     * Restituisce tutti gli itinerari che sono in attesa di approvazione.
+     *
+     * @return Lista di itinerari pendenti.
+     */
     public List<Itinerario> visualizzaItinerariDaApprovare() {
         return itinerarioRepository.findByPendingTrue();
     }
 
+    /**
+     * Restituisce un itinerario specifico tramite il suo identificativo.
+     *
+     * @param id L'identificativo dell'itinerario da visualizzare.
+     * @return L'itinerario trovato, o null se non esiste.
+     */
     public Itinerario visualizzaItinerarioById(Long id) {
         return itinerarioRepository.findById(id).orElse(null);
     }

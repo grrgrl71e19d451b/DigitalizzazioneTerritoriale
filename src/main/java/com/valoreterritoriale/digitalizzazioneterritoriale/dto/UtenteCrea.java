@@ -2,6 +2,9 @@ package com.valoreterritoriale.digitalizzazioneterritoriale.dto;
 
 import lombok.Data;
 
+/**
+ * DTO per la creazione di un utente.
+ */
 @Data
 public class UtenteCrea {
     private Long id;

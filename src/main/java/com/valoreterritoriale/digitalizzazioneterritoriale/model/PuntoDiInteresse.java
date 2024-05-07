@@ -1,9 +1,13 @@
 package com.valoreterritoriale.digitalizzazioneterritoriale.model;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
+
+/**
+ * Modello per la rappresentazione di un punto di interesse.
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -20,6 +24,9 @@ public class PuntoDiInteresse {
     private double latitudine;
     private double longitudine;
 
+    /**
+     * Il creatore del punto di interesse.
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "creatore_id")
     private Utente creatore;  // Collegamento a Utente

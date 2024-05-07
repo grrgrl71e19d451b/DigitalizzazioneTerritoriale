@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Date;
 
+/**
+ * Modello per la rappresentazione di un contest di contribuzione.
+ */
 @Entity
 @Table(name = "contest_di_contribuzione")
 @Data

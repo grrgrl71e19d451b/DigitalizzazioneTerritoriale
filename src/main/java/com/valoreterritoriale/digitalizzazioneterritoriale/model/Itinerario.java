@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Modello per la rappresentazione di un itinerario.
+ */
 @Data
 @NoArgsConstructor
 @Entity
@@ -28,13 +31,16 @@ public class Itinerario {
     )
     private List<PuntoDiInteresse> puntiDiInteresse = new ArrayList<>();
 
-
     private String nomeItinerario;
     private String descrizione;
     private LocalDateTime dataPubblicazione;
     private boolean pending;
 
-    // Metodo per aggiungere un punto di interesse
+    /**
+     * Metodo per aggiungere un punto di interesse all'itinerario.
+     *
+     * @param puntoDiInteresse Il punto di interesse da aggiungere.
+     */
     public void addPuntoDiInteresse(PuntoDiInteresse puntoDiInteresse) {
         if (puntiDiInteresse == null) {
             puntiDiInteresse = new ArrayList<>();

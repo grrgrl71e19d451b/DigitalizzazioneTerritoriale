@@ -3,13 +3,14 @@ package com.valoreterritoriale.digitalizzazioneterritoriale.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Modello per la rappresentazione di un utente.
+ */
 @Entity
 @Table(name = "utente")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@Builder
+@Data
 public class Utente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +21,6 @@ public class Utente {
     private String comune;
     private String ruolo;
     private int eta;
-    private String username;  // Aggiunto campo username
-    private String password;  // Aggiunto campo password
+    private String username;
+    private String password;
 }

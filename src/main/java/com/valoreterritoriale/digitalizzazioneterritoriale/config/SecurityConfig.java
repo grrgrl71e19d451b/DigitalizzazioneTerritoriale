@@ -11,30 +11,40 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
+/**
+ * Classe di configurazione della sicurezza per Spring Security.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Configura la catena di filtri di sicurezza per gestire l'autenticazione e le autorizzazioni.
+     *
+     * @param http Oggetto HttpSecurity da configurare.
+     * @return SecurityFilterChain configurato.
+     * @throws Exception se si verifica un errore nella configurazione.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Configurazione delle autorizzazioni delle richieste HTTP
+                // Configurazione delle regole di autorizzazione per le richieste HTTP.
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/punti-di-interesse/visualizza/**","/punti-di-interesse/osm-info/**", "/itinerario/visualizza/**","/utente/crea", "/h2-console/**").permitAll()  // Accesso pubblico a visualizzare punti di interesse e itinerari
-                        .requestMatchers("/utente/crea", "/utente/visualizza/**", "/utente/cancella/**", "/utente/modifica-ruolo/**").hasRole("GESTOREPIATTAFORMA")
-                        .requestMatchers("/utente/richiediModificaRuolo").hasRole("CONTRIBUTORE")
-                        .requestMatchers("/punti-di-interesse/crea", "/itinerario/crea","/itinerario/aggiungiPoi").hasAnyRole("CURATORE", "CONTRIBUTOREAUTORIZZATO", "CONTRIBUTORE") // Creazione di punti di interesse e itinerari limitata a curatori e contributori autorizzati
-                        .requestMatchers("/itinerario/aggiungiPoi", "/punti-di-interesse/approve/**", "/itinerario/approve/**", "/punti-di-interesse/pending", "/itinerario/da-approvare").hasRole("CURATORE") // Gestione e approvazione di punti di interesse e itinerari limitata ai curatori
-                        .requestMatchers("/itinerario/cancella/**", "/punti-di-interesse/cancella/**").hasAnyRole("CURATORE", "CONTRIBUTOREAUTORIZZATO") // Cancellazione limitata a curatori e contributori autorizzati
-                        .requestMatchers("/preferiti/**").hasRole("TURISTAAUTENTICATO")
-                        .requestMatchers("/contest-di-contribuzione/mostra/{id}").hasAnyRole("TURISTAAUTENTICATO", "CONTRIBUTORE", "CONTRIBUTOREAUTORIZZATO", "ANIMATORE") // Mostra contest di contribuzione
-                        .requestMatchers("/contest-di-contribuzione/partecipaAlContest").hasAnyRole("TURISTAAUTENTICATO", "CONTRIBUTORE", "CONTRIBUTOREAUTORIZZATO") // Partecipa ai contest di contribuzione
+                        .requestMatchers("/", "/home", "/punti-di-interesse/visualizza/**","/punti-di-interesse/osm-info/**", "/itinerario/visualizza/**","/utente/crea", "/h2-console/**").permitAll()  // Permette l'accesso pubblico alle pagine specificate.
+                        .requestMatchers("/utente/crea", "/utente/visualizza/**", "/utente/cancella/**", "/utente/modifica-ruolo/**").hasRole("GESTOREPIATTAFORMA")  // Accesso limitato ai gestori della piattaforma.
+                        .requestMatchers("/utente/richiediModificaRuolo").hasRole("CONTRIBUTORE")  // Accesso limitato ai contributori.
+                        .requestMatchers("/punti-di-interesse/crea", "/itinerario/crea","/itinerario/aggiungiPoi").hasAnyRole("CURATORE", "CONTRIBUTOREAUTORIZZATO", "CONTRIBUTORE") // Accesso limitato a ruoli specificati per la creazione di contenuti.
+                        .requestMatchers("/itinerario/aggiungiPoi", "/punti-di-interesse/approve/**", "/itinerario/approve/**", "/punti-di-interesse/pending", "/itinerario/da-approvare").hasRole("CURATORE") // Accesso limitato ai curatori per la gestione e approvazione.
+                        .requestMatchers("/itinerario/cancella/**", "/punti-di-interesse/cancella/**").hasAnyRole("CURATORE", "CONTRIBUTOREAUTORIZZATO") // Accesso limitato per la cancellazione di contenuti.
+                        .requestMatchers("/preferiti/**").hasRole("TURISTAAUTENTICATO")  // Accesso limitato ai turisti autenticati.
+                        .requestMatchers("/contest-di-contribuzione/mostra/{id}").hasAnyRole("TURISTAAUTENTICATO", "CONTRIBUTORE", "CONTRIBUTOREAUTORIZZATO", "ANIMATORE") // Accesso a contest specifici per ruoli definiti.
+                        .requestMatchers("/contest-di-contribuzione/partecipaAlContest").hasAnyRole("TURISTAAUTENTICATO", "CONTRIBUTORE", "CONTRIBUTOREAUTORIZZATO") // Permette la partecipazione a contest.
                         .requestMatchers("/contest-di-contribuzione/**").hasRole("ANIMATORE")
-                        .anyRequest().authenticated() // Tutte le altre richieste richiedono autenticazione
+                        .anyRequest().authenticated() // Tutte le altre richieste richiedono autenticazione.
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
+                        .loginPage("/login")  // Pagina di login personalizzata.
+                        .loginProcessingUrl("/login")  // URL per il processing del login.
                         .successHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
                             request.getSession().setAttribute("loginMessage", "Login effettuato con successo!");
@@ -46,14 +56,14 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl("/logout")  // URL per il logout.
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
                             request.setAttribute("logoutMessage", "Logout effettuato con successo!");
                         })
-                        .logoutSuccessUrl("/login?logout")
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
+                        .logoutSuccessUrl("/login?logout")  // Reindirizza dopo il logout.
+                        .invalidateHttpSession(true)  // Invalida la sessione.
+                        .clearAuthentication(true)  // Pulisce l'autenticazione.
                         .permitAll()
                 )
                 .exceptionHandling(handling -> handling
@@ -62,15 +72,20 @@ public class SecurityConfig {
                             request.setAttribute("accessDeniedMessage", "Utente non autenticato. Accesso negato.");
                         })
                 )
-                .csrf(AbstractHttpConfigurer::disable)  // Disabilita completamente la protezione CSRF
+                .csrf(AbstractHttpConfigurer::disable)  // Disabilitazione della protezione CSRF.
                 .headers(headers -> headers
-                        .addHeaderWriter(new StaticHeadersWriter("Content-Security-Policy", "frame-ancestors 'self'"))  // Imposta una politica di sicurezza del contenuto per prevenire clickjacking
+                        .addHeaderWriter(new StaticHeadersWriter("Content-Security-Policy", "frame-ancestors 'self'"))  // Imposta la politica di sicurezza dei contenuti.
                 )
-                .cors(AbstractHttpConfigurer::disable);  // Disabilita CORS
+                .cors(AbstractHttpConfigurer::disable);  // Disabilitazione di CORS.
 
-        return http.build();  // Costruisce la configurazione HttpSecurity
+        return http.build();  // Costruisce e restituisce la configurazione di HttpSecurity.
     }
 
+    /**
+     * Bean per la codifica delle password con BCrypt.
+     *
+     * @return PasswordEncoder codificatore di password.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

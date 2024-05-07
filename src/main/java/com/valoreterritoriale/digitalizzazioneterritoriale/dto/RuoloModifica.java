@@ -1,9 +1,12 @@
 package com.valoreterritoriale.digitalizzazioneterritoriale.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter @Setter
+/**
+ * DTO per la modifica del ruolo di un utente.
+ */
+
+@Data
 public class RuoloModifica {
     private String nuovoRuolo;
 }
