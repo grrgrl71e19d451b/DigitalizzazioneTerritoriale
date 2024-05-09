@@ -132,11 +132,17 @@ public class UtenteController {
      */
     @DeleteMapping("/cancella/{id}")
     public ResponseEntity<?> cancellaUtente(@PathVariable Long id) {
-        boolean isDeleted = utenteService.cancellaUtente(id);
-        if (isDeleted) {
-            return ResponseEntity.ok("Utente cancellato con successo");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente non trovato");
+        try {
+            boolean isDeleted = utenteService.cancellaUtente(id);
+            if (isDeleted) {
+                return ResponseEntity.ok("Utente cancellato con successo");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente non trovato");
+            }
+        } catch (Exception ex) {
+            // Gestisci qualsiasi eccezione lanciata dal service
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Si è verificato un errore durante la cancellazione dell'utente.");
         }
     }
 }

@@ -89,12 +89,16 @@ public class ItinerarioService {
      */
     @Transactional
     public boolean cancellaItinerario(Long id) {
-        if (itinerarioRepository.existsById(id)) {
-            itinerarioRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
-        }
+        Itinerario itinerario = itinerarioRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Itinerario non trovato"));
+
+        // Rimuovi tutte le associazioni tra l'itinerario e i punti di interesse
+        itinerario.getPuntiDiInteresse().clear();
+        itinerarioRepository.save(itinerario);
+
+        // Ora puoi eliminare l'itinerario senza problemi
+        itinerarioRepository.deleteById(id);
+        return true;
     }
 
     /**

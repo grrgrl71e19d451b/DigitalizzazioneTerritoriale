@@ -614,6 +614,11 @@
 							"key": "codicePartecipazione",
 							"value": "XYZ123",
 							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
 						}
 					]
 				},
