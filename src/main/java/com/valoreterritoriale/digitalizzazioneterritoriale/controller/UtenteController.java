@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/utente")
-public class UtenteController {
+public class UtenteController extends AbstractController {
 
     private final UtenteService utenteService;
     private final EmailService emailService;
@@ -42,7 +42,7 @@ public class UtenteController {
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PostMapping("/crea")
-    public ResponseEntity<?> creaUtente(@RequestBody UtenteCrea utenteCrea, Authentication authentication) {
+    public ResponseEntity<String> creaUtente(@RequestBody UtenteCrea utenteCrea, Authentication authentication) {
         Utente utente = new Utente();
         utente.setNome(utenteCrea.getNome());
         utente.setCognome(utenteCrea.getCognome());
@@ -60,18 +60,18 @@ public class UtenteController {
             if (ruoloAutenticato.contains("GESTOREPIATTAFORMA")) {
                 utente.setRuolo(utenteCrea.getRuolo());
             } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non autorizzato a creare utenti");
+                return createErrorResponse("Non autorizzato a creare utenti", HttpStatus.FORBIDDEN);
             }
         } else {
             if (utenteCrea.getRuolo().equals("TURISTAAUTENTICATO") || utenteCrea.getRuolo().equals("CONTRIBUTORE")) {
                 utente.setRuolo(utenteCrea.getRuolo());
             } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non autorizzato ad assegnare altri ruoli per utenti non autenticati");
+                return createErrorResponse("Non autorizzato ad assegnare altri ruoli per utenti non autenticati", HttpStatus.FORBIDDEN);
             }
         }
 
         utenteService.creaUtente(utente);
-        return ResponseEntity.ok("Utente creato con successo");
+        return createSuccessResponse("Utente creato con successo");
     }
 
     /**
@@ -87,9 +87,9 @@ public class UtenteController {
 
             emailService.sendRuoloModificaEmail(username, richiestaModificaRuolo);
 
-            return ResponseEntity.ok("La tua richiesta di modifica del ruolo è stata inviata al GESTOREPIATTAFORMA per l'approvazione.");
+            return createSuccessResponse("La tua richiesta di modifica del ruolo è stata inviata al GESTOREPIATTAFORMA per l'approvazione.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante l'invio della richiesta di modifica del ruolo: " + e.getMessage());
+            return createErrorResponse("Errore durante l'invio della richiesta di modifica del ruolo: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -102,9 +102,9 @@ public class UtenteController {
     public ResponseEntity<?> visualizzaUtente(@PathVariable Long id) {
         Utente utente = utenteService.visualizzaUtente(id);
         if (utente != null) {
-            return ResponseEntity.ok(utente);
+            return createObjectResponse(utente);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente non trovato");
+            return createErrorResponse("Utente non trovato", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -115,13 +115,13 @@ public class UtenteController {
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PutMapping("/modifica-ruolo/{id}")
-    public ResponseEntity<?> modificaRuoloUtente(@PathVariable Long id, @RequestBody RuoloModifica ruoloModifica) {
+    public ResponseEntity<String> modificaRuoloUtente(@PathVariable Long id, @RequestBody RuoloModifica ruoloModifica) {
         try {
             String nuovoRuolo = ruoloModifica.getNuovoRuolo();
             Utente updatedUtente = utenteService.modificaRuoloUtente(id, nuovoRuolo);
-            return ResponseEntity.ok("Ruolo aggiornato con successo: " + updatedUtente.getRuolo());
+            return createSuccessResponse("Ruolo aggiornato con successo: " + updatedUtente.getRuolo());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Errore: " + e.getMessage());
+            return createErrorResponse("Errore: " + e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -131,18 +131,17 @@ public class UtenteController {
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @DeleteMapping("/cancella/{id}")
-    public ResponseEntity<?> cancellaUtente(@PathVariable Long id) {
+    public ResponseEntity<String> cancellaUtente(@PathVariable Long id) {
         try {
             boolean isDeleted = utenteService.cancellaUtente(id);
             if (isDeleted) {
-                return ResponseEntity.ok("Utente cancellato con successo");
+                return createSuccessResponse("Utente cancellato con successo");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente non trovato");
+                return createErrorResponse("Utente non trovato", HttpStatus.NOT_FOUND);
             }
         } catch (Exception ex) {
             // Gestisci qualsiasi eccezione lanciata dal service
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Si è verificato un errore durante la cancellazione dell'utente.");
+            return createErrorResponse("Si è verificato un errore durante la cancellazione dell'utente.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

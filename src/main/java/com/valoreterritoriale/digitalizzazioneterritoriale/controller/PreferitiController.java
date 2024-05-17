@@ -13,7 +13,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/preferiti")
-public class PreferitiController {
+public class PreferitiController extends AbstractController {
     private final PreferitiService preferitiService;
 
     /**
@@ -36,12 +36,12 @@ public class PreferitiController {
         try {
             boolean success = preferitiService.aggiungiItinerarioAiPreferiti(itinerarioId);
             if (success) {
-                return ResponseEntity.ok("Preferito aggiunto con successo");
+                return createSuccessResponse("Preferito aggiunto con successo");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Impossibile aggiungere il preferito");
+                return createErrorResponse("Impossibile aggiungere il preferito", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nell'aggiunta del preferito: " + e.getMessage());
+            return createErrorResponse("Errore nell'aggiunta del preferito: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -56,12 +56,12 @@ public class PreferitiController {
         try {
             boolean success = preferitiService.rimuoviItinerarioDaiPreferiti(itinerarioId);
             if (success) {
-                return ResponseEntity.ok("Preferito rimosso con successo");
+                return createSuccessResponse("Preferito rimosso con successo");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Impossibile rimuovere il preferito");
+                return createErrorResponse("Impossibile rimuovere il preferito", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nella rimozione del preferito: " + e.getMessage());
+            return createErrorResponse("Errore nella rimozione del preferito: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -71,12 +71,12 @@ public class PreferitiController {
      * @return ResponseEntity con la lista dei preferiti.
      */
     @GetMapping("/visualizza")
-    public ResponseEntity<List<Preferito>> visualizzaPreferiti() {
+    public ResponseEntity<?> visualizzaPreferiti() {
         try {
             List<Preferito> preferiti = preferitiService.visualizzaPreferiti();
-            return ResponseEntity.ok(preferiti);
+            return createListResponse(preferiti);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return createErrorResponse("Errore durante la visualizzazione dei preferiti", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

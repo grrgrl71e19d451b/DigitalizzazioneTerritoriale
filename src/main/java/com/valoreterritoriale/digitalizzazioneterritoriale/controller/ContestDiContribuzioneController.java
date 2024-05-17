@@ -24,11 +24,12 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/contest-di-contribuzione")
-public class ContestDiContribuzioneController {
+public class ContestDiContribuzioneController extends AbstractController {
     private final ContestDiContribuzioneService contestService;
     private final UtenteRepository utenteRepository;
     private final PartecipazioneService partecipazioneService;
     private final EmailService emailService;
+
     /**
      * Costruttore per l'iniezione delle dipendenze necessarie.
      *
@@ -36,7 +37,6 @@ public class ContestDiContribuzioneController {
      * @param utenteRepository Repository per la gestione degli utenti.
      * @param partecipazioneService Servizio per la gestione delle partecipazioni ai contest.
      */
-
     @Autowired
     public ContestDiContribuzioneController(ContestDiContribuzioneService contestService,
                                             UtenteRepository utenteRepository,
@@ -47,7 +47,6 @@ public class ContestDiContribuzioneController {
         this.partecipazioneService = partecipazioneService;
         this.emailService = emailService;
     }
-
 
     /**
      * Endpoint per la creazione di un contest di contribuzione.
@@ -66,12 +65,12 @@ public class ContestDiContribuzioneController {
 
             boolean isCreated = contestService.creaContestDiContribuzione(contestDiContribuzioneDTO);
             if (isCreated) {
-                return ResponseEntity.ok("Contest di contribuzione creato con successo");
+                return createSuccessResponse("Contest di contribuzione creato con successo");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Impossibile creare il contest di contribuzione");
+                return createErrorResponse("Impossibile creare il contest di contribuzione", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nella creazione del contest di contribuzione: " + e.getMessage());
+            return createErrorResponse("Errore nella creazione del contest di contribuzione: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -86,7 +85,7 @@ public class ContestDiContribuzioneController {
     public ResponseEntity<String> invitaUtente(@PathVariable Long contestId, @RequestBody ContestUtenteInvita utenteInvita) {
         try {
             if (contestService.trovaContestDiContribuzionePerId(contestId).isEmpty()) {
-                throw new IllegalArgumentException("Contest non trovato");
+                return createErrorResponse("Contest non trovato", HttpStatus.NOT_FOUND);
             }
 
             final String CODICE_UNIVERSALE = "XYZ123";
@@ -94,9 +93,9 @@ public class ContestDiContribuzioneController {
             // Invia l'email utilizzando l'email fornita nel DTO
             emailService.sendContestPartecipationEmail(utenteInvita.getName(), utenteInvita.getEmail(), contestId, CODICE_UNIVERSALE);
 
-            return ResponseEntity.ok("Invito inviato a " + utenteInvita.getName() + " con il codice di partecipazione.");
+            return createSuccessResponse("Invito inviato a " + utenteInvita.getName() + " con il codice di partecipazione.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nell'invio dell'invito: " + e.getMessage());
+            return createErrorResponse("Errore nell'invio dell'invito: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -119,15 +118,15 @@ public class ContestDiContribuzioneController {
                     .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
 
             if (!partecipazioneService.verificaCodice(codicePartecipazione, contestId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Codice di partecipazione non valido o contest non trovato.");
+                return createErrorResponse("Codice di partecipazione non valido o contest non trovato.", HttpStatus.UNAUTHORIZED);
             }
 
             byte[] fileBytes = (file != null) ? file.getBytes() : null;
             partecipazioneService.aggiungiPartecipanteAlContest(utenteAutenticato.getId(), contestId, codicePartecipazione, fileBytes);
 
-            return ResponseEntity.ok("Partecipazione al contest confermata. Il materiale inviato è in attesa di validazione.");
+            return createSuccessResponse("Partecipazione al contest confermata. Il materiale inviato è in attesa di validazione.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante la registrazione al contest: " + e.getMessage());
+            return createErrorResponse("Errore durante la registrazione al contest: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -141,9 +140,9 @@ public class ContestDiContribuzioneController {
     public ResponseEntity<?> visionaMaterialePartecipanti(@PathVariable Long contestId) {
         try {
             List<Partecipazione> partecipazioni = partecipazioneService.trovaPartecipazioniPerContestId(contestId);
-            return ResponseEntity.ok(partecipazioni);
+            return createListResponse(partecipazioni);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nella visualizzazione del materiale dei partecipanti: " + e.getMessage());
+            return createErrorResponse("Errore nella visualizzazione del materiale dei partecipanti: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -157,9 +156,9 @@ public class ContestDiContribuzioneController {
     public ResponseEntity<String> approvaPartecipazione(@PathVariable Long partecipazioneId) {
         try {
             partecipazioneService.approvaPartecipazione(partecipazioneId);
-            return ResponseEntity.ok("Partecipazione approvata con successo");
+            return createSuccessResponse("Partecipazione approvata con successo");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -172,8 +171,8 @@ public class ContestDiContribuzioneController {
     @GetMapping("/mostra/{id}")
     public ResponseEntity<ContestDiContribuzione> mostraContestDiContribuzione(@PathVariable Long id) {
         return contestService.trovaContestDiContribuzionePerId(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .map(this::createObjectResponse)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
     /**

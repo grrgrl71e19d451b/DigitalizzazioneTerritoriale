@@ -21,7 +21,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/punti-di-interesse")
-public class PuntoDiInteresseController {
+public class PuntoDiInteresseController extends AbstractController {
     private final PuntoDiInteresseService puntoDiInteresseService;
     private final UtenteRepository utenteRepository;
     private final RestTemplate restTemplate;
@@ -45,7 +45,7 @@ public class PuntoDiInteresseController {
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PostMapping("/crea")
-    public ResponseEntity<?> creaPuntoDiInteresse(@RequestBody PuntoDiInteresseCrea puntoDiInteresseDTO) {
+    public ResponseEntity<String> creaPuntoDiInteresse(@RequestBody PuntoDiInteresseCrea puntoDiInteresseDTO) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
@@ -55,12 +55,12 @@ public class PuntoDiInteresseController {
 
             boolean isCreated = puntoDiInteresseService.creaPuntoDiInteresse(puntoDiInteresseDTO);
             if (isCreated) {
-                return ResponseEntity.ok("Punto di interesse creato con successo");
+                return createSuccessResponse("Punto di interesse creato con successo");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Impossibile creare il punto di interesse");
+                return createErrorResponse("Impossibile creare il punto di interesse", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nella creazione del punto di interesse: " + e.getMessage());
+            return createErrorResponse("Errore nella creazione del punto di interesse: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -70,12 +70,12 @@ public class PuntoDiInteresseController {
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @DeleteMapping("/cancella/{id}")
-    public ResponseEntity<?> cancellaPuntoDiInteresse(@PathVariable Long id) {
+    public ResponseEntity<String> cancellaPuntoDiInteresse(@PathVariable Long id) {
         boolean isDeleted = puntoDiInteresseService.cancellaPuntoDiInteresse(id);
         if (isDeleted) {
-            return ResponseEntity.ok("Punto di interesse cancellato con successo");
+            return createSuccessResponse("Punto di interesse cancellato con successo");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse non trovato");
+            return createErrorResponse("Punto di interesse non trovato", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -91,10 +91,10 @@ public class PuntoDiInteresseController {
             if (!puntoDiInteresse.isPending()) {
                 return ResponseEntity.ok(puntoDiInteresse);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse con ID " + id + " è in attesa di approvazione.");
+                return createErrorResponse("Punto di interesse con ID " + id + " è in attesa di approvazione.", HttpStatus.NOT_FOUND);
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse con ID " + id + " non trovato.");
+            return createErrorResponse("Punto di interesse con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -116,9 +116,9 @@ public class PuntoDiInteresseController {
     public ResponseEntity<String> approvaPuntoDiInteresse(@PathVariable Long id) {
         try {
             puntoDiInteresseService.approvaPuntoDiInteresse(id);
-            return ResponseEntity.ok("Punto di interesse approvato con successo");
+            return createSuccessResponse("Punto di interesse approvato con successo");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -131,14 +131,14 @@ public class PuntoDiInteresseController {
     public ResponseEntity<?> getOsmInfoById(@PathVariable Long id) {
         PuntoDiInteresse puntoDiInteresse = puntoDiInteresseService.visualizzaPuntoDiInteresseById(id);
         if (puntoDiInteresse == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse non trovato.");
+            return createErrorResponse("Punto di interesse non trovato.", HttpStatus.NOT_FOUND);
         }
 
         if (!puntoDiInteresse.isPending()) {
             String osmData = fetchOsmData(puntoDiInteresse.getLatitudine(), puntoDiInteresse.getLongitudine());
-            return ResponseEntity.ok(osmData);
+            return createObjectResponse(osmData);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Punto di interesse con ID " + id + " è in attesa di approvazione.");
+            return createErrorResponse("Punto di interesse con ID " + id + " è in attesa di approvazione.", HttpStatus.NOT_FOUND);
         }
     }
 

@@ -20,7 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/itinerario")
-public class ItinerarioController {
+public class ItinerarioController extends AbstractController {
 
     private final ItinerarioService itinerarioService;
     private final UtenteRepository utenteRepository;
@@ -44,7 +44,7 @@ public class ItinerarioController {
      * @return ResponseEntity con l'itinerario creato o un messaggio di errore.
      */
     @PostMapping("/crea")
-    public ResponseEntity<Itinerario> creaItinerario(@RequestBody ItinerarioCrea itinerarioDTO) {
+    public ResponseEntity<?> creaItinerario(@RequestBody ItinerarioCrea itinerarioDTO) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
@@ -54,9 +54,9 @@ public class ItinerarioController {
             itinerarioDTO.setPending(isPendingTrue);
 
             Itinerario itinerario = itinerarioService.creaItinerario(itinerarioDTO);
-            return ResponseEntity.ok(itinerario);
+            return createObjectResponse(itinerario);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return createErrorResponse("Errore durante la creazione dell'itinerario: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -67,12 +67,12 @@ public class ItinerarioController {
      * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
      */
     @PutMapping("/aggiungiPoi")
-    public ResponseEntity<?> aggiungiPoiAItinerario(@RequestBody PoiAItinerarioAggiungi dto) {
+    public ResponseEntity<String> aggiungiPoiAItinerario(@RequestBody PoiAItinerarioAggiungi dto) {
         try {
             itinerarioService.aggiungiPoiAItinerario(dto);
-            return ResponseEntity.ok("Punto di interesse aggiunto all'itinerario con successo.");
+            return createSuccessResponse("Punto di interesse aggiunto all'itinerario con successo.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Errore nell'aggiunta del punto di interesse all'itinerario: " + e.getMessage());
+            return createErrorResponse("Errore nell'aggiunta del punto di interesse all'itinerario: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -83,12 +83,12 @@ public class ItinerarioController {
      * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
      */
     @DeleteMapping("/cancella/{id}")
-    public ResponseEntity<?> cancellaItinerario(@PathVariable Long id) {
+    public ResponseEntity<String> cancellaItinerario(@PathVariable Long id) {
         boolean isDeleted = itinerarioService.cancellaItinerario(id);
         if (isDeleted) {
-            return ResponseEntity.ok("Itinerario cancellato con successo.");
+            return createSuccessResponse("Itinerario cancellato con successo.");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Itinerario non trovato.");
+            return createErrorResponse("Itinerario non trovato.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -99,12 +99,12 @@ public class ItinerarioController {
      * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
      */
     @PutMapping("/approva/{id}")
-    public ResponseEntity<?> approvaItinerario(@PathVariable Long id) {
+    public ResponseEntity<String> approvaItinerario(@PathVariable Long id) {
         try {
             itinerarioService.approvaItinerario(id);
-            return ResponseEntity.ok("Itinerario approvato con successo.");
+            return createSuccessResponse("Itinerario approvato con successo.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Errore nell'approvazione dell'itinerario: " + e.getMessage());
+            return createErrorResponse("Errore nell'approvazione dell'itinerario: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -116,7 +116,7 @@ public class ItinerarioController {
     @GetMapping("/da-approvare")
     public ResponseEntity<List<Itinerario>> visualizzaItinerariDaApprovare() {
         List<Itinerario> itinerari = itinerarioService.visualizzaItinerariDaApprovare();
-        return ResponseEntity.ok(itinerari);
+        return createListResponse(itinerari);
     }
 
     /**
@@ -129,11 +129,11 @@ public class ItinerarioController {
     public ResponseEntity<?> visualizzaItinerarioById(@PathVariable Long id) {
         Itinerario itinerario = itinerarioService.visualizzaItinerarioById(id);
         if (itinerario != null && !itinerario.isPending()) {
-            return ResponseEntity.ok(itinerario);
+            return createObjectResponse(itinerario);
         } else if (itinerario != null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Itinerario con ID " + id + " non è stato ancora approvato.");
+            return createErrorResponse("Itinerario con ID " + id + " non è stato ancora approvato.", HttpStatus.NOT_FOUND);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Itinerario con ID " + id + " non trovato.");
+            return createErrorResponse("Itinerario con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
         }
     }
 }
