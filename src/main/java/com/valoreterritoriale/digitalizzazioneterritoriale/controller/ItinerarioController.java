@@ -45,18 +45,26 @@ public class ItinerarioController extends AbstractController {
      */
     @PostMapping("/crea")
     public ResponseEntity<?> creaItinerario(@RequestBody ItinerarioCrea itinerarioDTO) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
-                    .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+        return create(itinerarioDTO, SecurityContextHolder.getContext().getAuthentication());
+    }
 
-            boolean isPendingTrue = "CONTRIBUTORE".equals(utenteAutenticato.getRuolo());
-            itinerarioDTO.setPending(isPendingTrue);
+    @Override
+    protected ResponseEntity<?> create(Object request, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            ItinerarioCrea itinerarioDTO = (ItinerarioCrea) request;
+            try {
+                Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
+                        .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+                boolean isPendingTrue = "CONTRIBUTORE".equals(utenteAutenticato.getRuolo());
+                itinerarioDTO.setPending(isPendingTrue);
 
-            Itinerario itinerario = itinerarioService.creaItinerario(itinerarioDTO);
-            return createObjectResponse(itinerario);
-        } catch (Exception e) {
-            return createErrorResponse("Errore durante la creazione dell'itinerario: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                Itinerario itinerario = itinerarioService.creaItinerario(itinerarioDTO);
+                return createObjectResponse(itinerario);
+            } catch (Exception e) {
+                return createErrorResponse("Errore durante la creazione dell'itinerario: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -80,15 +88,30 @@ public class ItinerarioController extends AbstractController {
      * Endpoint per cancellare un itinerario esistente.
      *
      * @param id Identificativo dell'itinerario da cancellare.
+     * @param authentication informazioni sull'autenticazione dell'utente.
      * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
      */
     @DeleteMapping("/cancella/{id}")
-    public ResponseEntity<String> cancellaItinerario(@PathVariable Long id) {
-        boolean isDeleted = itinerarioService.cancellaItinerario(id);
-        if (isDeleted) {
-            return createSuccessResponse("Itinerario cancellato con successo.");
-        } else {
-            return createErrorResponse("Itinerario non trovato.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> cancellaItinerario(@PathVariable Long id, Authentication authentication) {
+        return delete(id, authentication);
+    }
+
+    @Override
+    protected ResponseEntity<String> delete(Long id, Authentication authentication) {
+        try {
+            if (authentication != null && authentication.isAuthenticated()) {
+
+                boolean isDeleted = itinerarioService.cancellaItinerario(id);
+                if (isDeleted) {
+                    return createSuccessResponse("Itinerario cancellato con successo.");
+                } else {
+                    return createErrorResponse("Itinerario non trovato.", HttpStatus.NOT_FOUND);
+                }
+            } else {
+                return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception ex) {
+            return createErrorResponse("Errore nella cancellazione dell'itinerario: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/home")
-public class HomeController extends AbstractController {
+public class HomeController {
 
     /**
      * Metodo per ottenere la homepage.
@@ -19,6 +19,6 @@ public class HomeController extends AbstractController {
      */
     @GetMapping
     public ResponseEntity<String> getHomePage() {
-        return createSuccessResponse("Welcome to the Home Page");
+        return ResponseEntity.ok("Welcome to the Home Page");
     }
 }

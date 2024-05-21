@@ -56,21 +56,29 @@ public class ContestDiContribuzioneController extends AbstractController {
      */
     @PostMapping("/crea")
     public ResponseEntity<?> creaContestDiContribuzione(@RequestBody ContestDiContribuzioneCrea contestDiContribuzioneDTO) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
-                    .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+        return create(contestDiContribuzioneDTO, SecurityContextHolder.getContext().getAuthentication());
+    }
 
-            contestDiContribuzioneDTO.setCreatore(utenteAutenticato);
+    @Override
+    protected ResponseEntity<?> create(Object request, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            ContestDiContribuzioneCrea contestDiContribuzioneDTO = (ContestDiContribuzioneCrea) request;
+            try {
+                Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
+                        .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+                contestDiContribuzioneDTO.setCreatore(utenteAutenticato);
 
-            boolean isCreated = contestService.creaContestDiContribuzione(contestDiContribuzioneDTO);
-            if (isCreated) {
-                return createSuccessResponse("Contest di contribuzione creato con successo");
-            } else {
-                return createErrorResponse("Impossibile creare il contest di contribuzione", HttpStatus.INTERNAL_SERVER_ERROR);
+                boolean isCreated = contestService.creaContestDiContribuzione(contestDiContribuzioneDTO);
+                if (isCreated) {
+                    return createSuccessResponse("Contest di contribuzione creato con successo");
+                } else {
+                    return createErrorResponse("Impossibile creare il contest di contribuzione", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } catch (Exception e) {
+                return createErrorResponse("Errore nella creazione del contest di contribuzione: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } catch (Exception e) {
-            return createErrorResponse("Errore nella creazione del contest di contribuzione: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -179,11 +187,27 @@ public class ContestDiContribuzioneController extends AbstractController {
      * Endpoint per cancellare un contest di contribuzione.
      *
      * @param id Identificativo del contest da cancellare.
-     * @return ResponseEntity senza contenuto.
+     * @param authentication informazioni sull'autenticazione dell'utente.
+     * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
      */
     @DeleteMapping("/cancella/{id}")
-    public ResponseEntity<Void> cancellaContestDiContribuzione(@PathVariable Long id) {
-        contestService.cancellaContestDiContribuzionePerId(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> cancellaContestDiContribuzione(@PathVariable Long id, Authentication authentication) {
+        return delete(id, authentication);
     }
+
+    @Override
+    protected ResponseEntity<String> delete(Long id, Authentication authentication) {
+        try {
+            if (authentication != null && authentication.isAuthenticated()) {
+
+                contestService.cancellaContestDiContribuzionePerId(id);
+                return createSuccessResponse("Contest cancellato con successo.");
+            } else {
+                return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception ex) {
+            return createErrorResponse("Si è verificato un errore durante la cancellazione del contest: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

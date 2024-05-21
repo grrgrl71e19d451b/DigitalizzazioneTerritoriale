@@ -46,36 +46,63 @@ public class PuntoDiInteresseController extends AbstractController {
      */
     @PostMapping("/crea")
     public ResponseEntity<String> creaPuntoDiInteresse(@RequestBody PuntoDiInteresseCrea puntoDiInteresseDTO) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
-                    .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
-            boolean isPendingTrue = "CONTRIBUTORE".equals(utenteAutenticato.getRuolo());
-            puntoDiInteresseDTO.setPending(isPendingTrue);
+        return (ResponseEntity<String>) create(puntoDiInteresseDTO, SecurityContextHolder.getContext().getAuthentication());
+    }
 
-            boolean isCreated = puntoDiInteresseService.creaPuntoDiInteresse(puntoDiInteresseDTO);
-            if (isCreated) {
-                return createSuccessResponse("Punto di interesse creato con successo");
-            } else {
-                return createErrorResponse("Impossibile creare il punto di interesse", HttpStatus.INTERNAL_SERVER_ERROR);
+    @Override
+    protected ResponseEntity<?> create(Object request, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            PuntoDiInteresseCrea puntoDiInteresseDTO = (PuntoDiInteresseCrea) request;
+            try {
+                Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
+                        .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
+                boolean isPendingTrue = "CONTRIBUTORE".equals(utenteAutenticato.getRuolo());
+                puntoDiInteresseDTO.setPending(isPendingTrue);
+
+                boolean isCreated = puntoDiInteresseService.creaPuntoDiInteresse(puntoDiInteresseDTO);
+                if (isCreated) {
+                    return createSuccessResponse("Punto di interesse creato con successo");
+                } else {
+                    return createErrorResponse("Impossibile creare il punto di interesse", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } catch (Exception e) {
+                return createErrorResponse("Errore nella creazione del punto di interesse: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } catch (Exception e) {
-            return createErrorResponse("Errore nella creazione del punto di interesse: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
         }
     }
+
+
 
     /**
      * Metodo per cancellare un punto di interesse dato il suo ID.
      * @param id l'ID del punto di interesse da cancellare.
+     * @param authentication informazioni sull'autenticazione dell'utente.
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @DeleteMapping("/cancella/{id}")
-    public ResponseEntity<String> cancellaPuntoDiInteresse(@PathVariable Long id) {
-        boolean isDeleted = puntoDiInteresseService.cancellaPuntoDiInteresse(id);
-        if (isDeleted) {
-            return createSuccessResponse("Punto di interesse cancellato con successo");
-        } else {
-            return createErrorResponse("Punto di interesse non trovato", HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> cancellaPuntoDiInteresse(@PathVariable Long id, Authentication authentication) {
+        return delete(id, authentication);
+    }
+
+    @Override
+    protected ResponseEntity<String> delete(Long id, Authentication authentication) {
+        try {
+            if (authentication != null && authentication.isAuthenticated()) {
+
+                boolean isDeleted = puntoDiInteresseService.cancellaPuntoDiInteresse(id);
+                if (isDeleted) {
+                    return createSuccessResponse("Punto di interesse cancellato con successo");
+                } else {
+                    return createErrorResponse("Punto di interesse non trovato", HttpStatus.NOT_FOUND);
+                }
+            } else {
+                return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception ex) {
+            // Gestisce qualsiasi eccezione lanciata dal service
+            return createErrorResponse("Si è verificato un errore durante la cancellazione del punto di interesse.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
