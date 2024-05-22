@@ -109,19 +109,25 @@ public class PuntoDiInteresseController extends AbstractController {
     /**
      * Metodo per visualizzare i dettagli di un punto di interesse tramite il suo ID.
      * @param id l'ID del punto di interesse.
+     * @param authentication le informazioni di autenticazione dell'utente.
      * @return ResponseEntity con il punto di interesse o un messaggio di errore se non trovato.
      */
     @GetMapping("/visualizza/{id}")
-    public ResponseEntity<?> visualizzaPuntoDiInteresseById(@PathVariable Long id) {
+    public ResponseEntity<?> visualizzaPuntoDiInteresseById(@PathVariable Long id, Authentication authentication) {
+        return read(id, authentication);
+    }
+
+    @Override
+    protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
         PuntoDiInteresse puntoDiInteresse = puntoDiInteresseService.visualizzaPuntoDiInteresseById(id);
         if (puntoDiInteresse != null) {
             if (!puntoDiInteresse.isPending()) {
-                return ResponseEntity.ok(puntoDiInteresse);
+                return (ResponseEntity<T>) ResponseEntity.ok(puntoDiInteresse);
             } else {
-                return createErrorResponse("Punto di interesse con ID " + id + " è in attesa di approvazione.", HttpStatus.NOT_FOUND);
+                return (ResponseEntity<T>) createErrorResponse("Punto di interesse con ID " + id + " è in attesa di approvazione.", HttpStatus.NOT_FOUND);
             }
         } else {
-            return createErrorResponse("Punto di interesse con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
+            return (ResponseEntity<T>) createErrorResponse("Punto di interesse con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -140,7 +146,12 @@ public class PuntoDiInteresseController extends AbstractController {
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PutMapping("/approve/{id}")
-    public ResponseEntity<String> approvaPuntoDiInteresse(@PathVariable Long id) {
+    public ResponseEntity<String> approvaPuntoDiInteresse(@PathVariable Long id, Authentication authentication) {
+        return update(id, null, authentication);
+    }
+
+    @Override
+    protected ResponseEntity<String> update(Long id, Object request, Authentication authentication) {
         try {
             puntoDiInteresseService.approvaPuntoDiInteresse(id);
             return createSuccessResponse("Punto di interesse approvato con successo");

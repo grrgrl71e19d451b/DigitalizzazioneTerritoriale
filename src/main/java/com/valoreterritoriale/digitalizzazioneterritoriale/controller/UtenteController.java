@@ -102,15 +102,23 @@ public class UtenteController extends AbstractController {
     /**
      * Metodo per visualizzare i dettagli di un utente.
      * @param id l'ID dell'utente da visualizzare.
+     * @param authentication le informazioni di autenticazione dell'utente.
      * @return ResponseEntity con l'utente o un messaggio di errore se non trovato.
      */
     @GetMapping("/visualizza/{id}")
-    public ResponseEntity<?> visualizzaUtente(@PathVariable Long id) {
+    public ResponseEntity<?> visualizzaUtente(@PathVariable Long id, Authentication authentication) {
+        return read(id, authentication);
+    }
+
+    @Override
+    protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
         Utente utente = utenteService.visualizzaUtente(id);
         if (utente != null) {
-            return createObjectResponse(utente);
+            // Usa il cast (T) utente per far corrispondere il tipo generico T
+            return (ResponseEntity<T>) createObjectResponse(utente);
         } else {
-            return createErrorResponse("Utente non trovato", HttpStatus.NOT_FOUND);
+            // Usa il cast (ResponseEntity<T>) per far corrispondere il tipo generico T
+            return (ResponseEntity<T>) createErrorResponse("Utente non trovato", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -121,9 +129,14 @@ public class UtenteController extends AbstractController {
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PutMapping("/modifica-ruolo/{id}")
-    public ResponseEntity<String> modificaRuoloUtente(@PathVariable Long id, @RequestBody RuoloModifica ruoloModifica) {
+    public ResponseEntity<?> modificaRuoloUtente(@PathVariable Long id, @RequestBody RuoloModifica ruoloModifica) {
+        return update(id, ruoloModifica, null);
+    }
+
+    @Override
+    protected ResponseEntity<String> update(Long id, Object request, Authentication authentication) {
         try {
-            String nuovoRuolo = ruoloModifica.getNuovoRuolo();
+            String nuovoRuolo = ((RuoloModifica) request).getNuovoRuolo();
             Utente updatedUtente = utenteService.modificaRuoloUtente(id, nuovoRuolo);
             return createSuccessResponse("Ruolo aggiornato con successo: " + updatedUtente.getRuolo());
         } catch (RuntimeException e) {
@@ -164,9 +177,7 @@ public class UtenteController extends AbstractController {
                 return new ResponseEntity<>("Non autenticato", HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception ex) {
-            // Gestisce qualsiasi eccezione lanciata dal service
             return new ResponseEntity<>("Si è verificato un errore durante la cancellazione dell'utente.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

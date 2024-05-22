@@ -77,5 +77,4 @@ public class EmailService {
         mailMessage.setText("Ciao " + name + ",\n\nSei stato invitato a partecipare al contest con ID: " + contestId + ". Utilizza questo codice di partecipazione: " + codicePartecipazione + "\n\nGrazie per partecipare!");
         return mailMessage;
     }
-
 }

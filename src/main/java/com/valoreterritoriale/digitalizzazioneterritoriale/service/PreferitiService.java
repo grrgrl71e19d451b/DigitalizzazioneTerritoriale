@@ -94,5 +94,4 @@ public class PreferitiService {
 
         return preferitiRepository.findByUtente(utente);
     }
-
 }

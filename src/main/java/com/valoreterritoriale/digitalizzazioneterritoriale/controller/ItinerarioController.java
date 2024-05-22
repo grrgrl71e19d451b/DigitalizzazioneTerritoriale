@@ -122,7 +122,12 @@ public class ItinerarioController extends AbstractController {
      * @return ResponseEntity con un messaggio di successo o un messaggio di errore.
      */
     @PutMapping("/approva/{id}")
-    public ResponseEntity<String> approvaItinerario(@PathVariable Long id) {
+    public ResponseEntity<String> approvaItinerario(@PathVariable Long id, Authentication authentication) {
+        return update(id, null, authentication);
+    }
+
+    @Override
+    protected ResponseEntity<String> update(Long id, Object request, Authentication authentication) {
         try {
             itinerarioService.approvaItinerario(id);
             return createSuccessResponse("Itinerario approvato con successo.");
@@ -146,17 +151,23 @@ public class ItinerarioController extends AbstractController {
      * Endpoint per visualizzare i dettagli di un itinerario specifico.
      *
      * @param id Identificativo dell'itinerario da visualizzare.
+     * @param authentication le informazioni di autenticazione dell'utente.
      * @return ResponseEntity con i dettagli dell'itinerario o un messaggio di errore se non trovato o non approvato.
      */
     @GetMapping("/visualizza/{id}")
-    public ResponseEntity<?> visualizzaItinerarioById(@PathVariable Long id) {
+    public ResponseEntity<?> visualizzaItinerarioById(@PathVariable Long id, Authentication authentication) {
+        return read(id, authentication);
+    }
+
+    @Override
+    protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
         Itinerario itinerario = itinerarioService.visualizzaItinerarioById(id);
         if (itinerario != null && !itinerario.isPending()) {
-            return createObjectResponse(itinerario);
+            return (ResponseEntity<T>) createObjectResponse(itinerario);
         } else if (itinerario != null) {
-            return createErrorResponse("Itinerario con ID " + id + " non è stato ancora approvato.", HttpStatus.NOT_FOUND);
+            return (ResponseEntity<T>) createErrorResponse("Itinerario con ID " + id + " non è stato ancora approvato.", HttpStatus.NOT_FOUND);
         } else {
-            return createErrorResponse("Itinerario con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
+            return (ResponseEntity<T>) createErrorResponse("Itinerario con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
         }
     }
 }

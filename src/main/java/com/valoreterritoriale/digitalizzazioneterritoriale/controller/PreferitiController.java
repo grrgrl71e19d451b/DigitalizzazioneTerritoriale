@@ -68,6 +68,7 @@ public class PreferitiController extends AbstractController {
     public ResponseEntity<String> rimuoviPreferito(@PathVariable Long itinerarioId, Authentication authentication) {
         return delete(itinerarioId, authentication);
     }
+
     @Override
     protected ResponseEntity<String> delete(Long itinerarioId, Authentication authentication) {
         try {
@@ -100,5 +101,28 @@ public class PreferitiController extends AbstractController {
         } catch (Exception e) {
             return createErrorResponse("Errore durante la visualizzazione dei preferiti", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Questo metodo non è attualmente implementato, ma è disponibile per future estensioni.
+     * @param id Identificativo della risorsa da leggere.
+     * @param authentication Informazioni sull'autenticazione dell'utente.
+     * @return ResponseEntity che incapsula l'esito dell'operazione di lettura.
+     */
+    @Override
+    protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
+        return null;
+    }
+
+    /**
+     * Questo metodo non è attualmente implementato, ma è disponibile per future estensioni.
+     * @param id Identificativo della risorsa da aggiornare.
+     * @param request Oggetto della richiesta contenente i dati aggiornati.
+     * @param authentication Informazioni sull'autenticazione dell'utente.
+     * @return ResponseEntity che incapsula l'esito dell'operazione di aggiornamento.
+     */
+    @Override
+    protected <T> ResponseEntity<T> update(Long id, Object request, Authentication authentication) {
+        return null;
     }
 }

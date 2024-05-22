@@ -174,10 +174,16 @@ public class ContestDiContribuzioneController extends AbstractController {
      * Endpoint per mostrare i dettagli di un contest di contribuzione.
      *
      * @param id Identificativo del contest.
+     * @param authentication le informazioni di autenticazione dell'utente.
      * @return ResponseEntity con i dettagli del contest o stato not found se non esiste.
      */
     @GetMapping("/mostra/{id}")
-    public ResponseEntity<ContestDiContribuzione> mostraContestDiContribuzione(@PathVariable Long id) {
+    public ResponseEntity<?> mostraContestDiContribuzione(@PathVariable Long id, Authentication authentication) {
+        return read(id, authentication);
+    }
+
+    @Override
+    protected ResponseEntity<ContestDiContribuzione> read(Long id, Authentication authentication) {
         return contestService.trovaContestDiContribuzionePerId(id)
                 .map(this::createObjectResponse)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
@@ -210,4 +216,15 @@ public class ContestDiContribuzioneController extends AbstractController {
         }
     }
 
+    /**
+     * Questo metodo non è attualmente implementato, ma è disponibile per future estensioni.
+     * @param id Identificativo della risorsa da aggiornare.
+     * @param request Oggetto della richiesta contenente i dati aggiornati.
+     * @param authentication Informazioni sull'autenticazione dell'utente.
+     * @return ResponseEntity che incapsula l'esito dell'operazione di aggiornamento.
+     */
+    @Override
+    protected <T> ResponseEntity<T> update(Long id, Object request, Authentication authentication) {
+        return null;
+    }
 }
