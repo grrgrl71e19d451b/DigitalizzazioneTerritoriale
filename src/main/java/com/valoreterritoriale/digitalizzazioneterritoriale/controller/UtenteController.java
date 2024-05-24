@@ -114,10 +114,8 @@ public class UtenteController extends AbstractController {
     protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
         Utente utente = utenteService.visualizzaUtente(id);
         if (utente != null) {
-            // Usa il cast (T) utente per far corrispondere il tipo generico T
             return (ResponseEntity<T>) createObjectResponse(utente);
         } else {
-            // Usa il cast (ResponseEntity<T>) per far corrispondere il tipo generico T
             return (ResponseEntity<T>) createErrorResponse("Utente non trovato", HttpStatus.NOT_FOUND);
         }
     }
@@ -150,6 +148,7 @@ public class UtenteController extends AbstractController {
      * @param authentication informazioni sull'autenticazione dell'utente.
      * @return ResponseEntity con il risultato dell'operazione.
      */
+
     @DeleteMapping("/cancella/{id}")
     public ResponseEntity<String> cancellaUtente(@PathVariable Long id, Authentication authentication) {
         return delete(id, authentication);
@@ -166,18 +165,18 @@ public class UtenteController extends AbstractController {
                 if (ruoloAutenticato.contains("GESTOREPIATTAFORMA")) {
                     boolean isDeleted = utenteService.cancellaUtente(id);
                     if (isDeleted) {
-                        return new ResponseEntity<>("Utente cancellato con successo", HttpStatus.NO_CONTENT);
+                        return createSuccessResponse("Utente cancellato con successo");
                     } else {
-                        return new ResponseEntity<>("Utente non trovato", HttpStatus.NOT_FOUND);
+                        return createErrorResponse("Utente non trovato", HttpStatus.NOT_FOUND);
                     }
                 } else {
-                    return new ResponseEntity<>("Non autorizzato a cancellare utenti", HttpStatus.FORBIDDEN);
+                    return createErrorResponse("Non autorizzato a cancellare utenti", HttpStatus.FORBIDDEN);
                 }
             } else {
-                return new ResponseEntity<>("Non autenticato", HttpStatus.UNAUTHORIZED);
+                return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception ex) {
-            return new ResponseEntity<>("Si è verificato un errore durante la cancellazione dell'utente.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return createErrorResponse("Si è verificato un errore durante la cancellazione dell'utente.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -1,74 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Definizione del progetto e dichiarazione dello schema -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- Versione del modello POM -->
 	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Definizione del progetto padre -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/> <!-- ricerca il parent nel repository -->
 	</parent>
+
+	<!-- Coordinate del progetto -->
 	<groupId>com.valoreterritoriale</groupId>
 	<artifactId>digitalizzazione-territoriale</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>digitalizzazione-territoriale</name>
 	<description>Una piattaforma per la valorizzazione e digitalizzazione delle informazioni culturali e turistiche comunali.</description>
+
+	<!-- Proprietà del progetto -->
 	<properties>
-		<java.version>19</java.version>
+		<java.version>17</java.version>
 	</properties>
+
+	<!-- Definizione delle dipendenze del progetto -->
 	<dependencies>
+		<!-- Dipendenza per JPA (Java Persistence API) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		<!-- Dipendenza per il modulo web di Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<!-- Dipendenza per DevTools, utile per lo sviluppo -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		<!-- Dipendenza per la sicurezza in Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		<!-- Dipendenza per il supporto email in Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+		<!-- Dipendenza per il database H2 in runtime -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- Dipendenza per i test con Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Dipendenza per Lombok, per ridurre il boilerplate di Java -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.22</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.13</version>
-		</dependency>
-    </dependencies>
+	</dependencies>
 
+	<!-- Configurazione della fase di build -->
 	<build>
 		<plugins>
+			<!-- Plugin per Spring Boot -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
