@@ -1,8 +1,7 @@
 package com.valoreterritoriale.digitalizzazioneterritoriale.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +9,11 @@ import java.util.List;
 /**
  * Modello per la rappresentazione di un itinerario.
  */
-@Data
-@NoArgsConstructor
+
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 @Table(name = "itinerario")
 public class Itinerario {
     @Id

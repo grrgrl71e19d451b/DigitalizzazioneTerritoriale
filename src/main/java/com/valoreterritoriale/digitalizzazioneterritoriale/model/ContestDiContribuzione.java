@@ -1,19 +1,17 @@
 package com.valoreterritoriale.digitalizzazioneterritoriale.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import java.util.Date;
 
 /**
  * Modello per la rappresentazione di un contest di contribuzione.
  */
 @Entity
-@Table(name = "contest_di_contribuzione")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
+@Table(name = "contest_di_contribuzione")
 public class ContestDiContribuzione {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

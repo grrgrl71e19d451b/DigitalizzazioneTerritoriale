@@ -1,15 +1,15 @@
 package com.valoreterritoriale.digitalizzazioneterritoriale.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Modello per la rappresentazione di un preferito, che associa un utente a un itinerario preferito.
  */
 @Entity
-@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Preferito {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

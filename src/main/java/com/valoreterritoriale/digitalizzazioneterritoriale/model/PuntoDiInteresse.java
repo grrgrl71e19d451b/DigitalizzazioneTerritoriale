@@ -1,17 +1,17 @@
 package com.valoreterritoriale.digitalizzazioneterritoriale.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import java.time.LocalDateTime;
 
 /**
  * Modello per la rappresentazione di un punto di interesse.
  */
 @Entity
-@Data
-@NoArgsConstructor
 @Table(name = "punto_di_interesse")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class PuntoDiInteresse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
