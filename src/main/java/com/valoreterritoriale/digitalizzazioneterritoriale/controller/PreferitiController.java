@@ -2,10 +2,10 @@ package com.valoreterritoriale.digitalizzazioneterritoriale.controller;
 
 import com.valoreterritoriale.digitalizzazioneterritoriale.model.Preferito;
 import com.valoreterritoriale.digitalizzazioneterritoriale.service.PreferitiService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +23,7 @@ public class PreferitiController extends AbstractController {
      *
      * @param preferitiService Servizio per la gestione dei preferiti.
      */
+    @Autowired
     public PreferitiController(PreferitiService preferitiService) {
         this.preferitiService = preferitiService;
     }
@@ -31,11 +32,12 @@ public class PreferitiController extends AbstractController {
      * Aggiunge un itinerario ai preferiti dell'utente.
      *
      * @param itinerarioId Identificativo dell'itinerario da aggiungere ai preferiti.
+     * @param authentication oggetto Authentication che rappresenta l'autenticazione dell'utente.
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PostMapping("/aggiungi/{itinerarioId}")
-    public ResponseEntity<String> aggiungiPreferito(@PathVariable Long itinerarioId) {
-        return (ResponseEntity<String>) create(itinerarioId, SecurityContextHolder.getContext().getAuthentication());
+    public ResponseEntity<String> aggiungiPreferito(@PathVariable Long itinerarioId, Authentication authentication) {
+        return (ResponseEntity<String>) create(itinerarioId, authentication);
     }
 
     @Override
@@ -56,6 +58,7 @@ public class PreferitiController extends AbstractController {
             return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
         }
     }
+
 
     /**
      * Rimuove un itinerario dai preferiti dell'utente.

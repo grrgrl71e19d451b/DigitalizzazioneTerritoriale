@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,11 +40,12 @@ public class ItinerarioController extends AbstractController {
      * Endpoint per la creazione di un nuovo itinerario.
      *
      * @param itinerarioDTO Oggetto contenente i dati necessari per la creazione di un itinerario.
+     * @param authentication oggetto Authentication che rappresenta l'autenticazione dell'utente.
      * @return ResponseEntity con l'itinerario creato o un messaggio di errore.
      */
     @PostMapping("/crea")
-    public ResponseEntity<?> creaItinerario(@RequestBody ItinerarioCrea itinerarioDTO) {
-        return create(itinerarioDTO, SecurityContextHolder.getContext().getAuthentication());
+    public ResponseEntity<?> creaItinerario(@RequestBody ItinerarioCrea itinerarioDTO, Authentication authentication) {
+        return create(itinerarioDTO, authentication);
     }
 
     @Override
@@ -67,6 +67,7 @@ public class ItinerarioController extends AbstractController {
             return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
         }
     }
+
 
     /**
      * Endpoint per aggiungere un Punto di Interesse (POI) a un itinerario esistente.
@@ -160,14 +161,14 @@ public class ItinerarioController extends AbstractController {
     }
 
     @Override
-    protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
+    protected ResponseEntity<?> read(Long id, Authentication authentication) {
         Itinerario itinerario = itinerarioService.visualizzaItinerarioById(id);
         if (itinerario != null && !itinerario.isPending()) {
-            return (ResponseEntity<T>) createObjectResponse(itinerario);
+            return createObjectResponse(itinerario);
         } else if (itinerario != null) {
-            return (ResponseEntity<T>) createErrorResponse("Itinerario con ID " + id + " non è stato ancora approvato.", HttpStatus.NOT_FOUND);
+            return createErrorResponse("Itinerario con ID " + id + " non è stato ancora approvato.", HttpStatus.NOT_FOUND);
         } else {
-            return (ResponseEntity<T>) createErrorResponse("Itinerario con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
+            return createErrorResponse("Itinerario con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
         }
     }
 }

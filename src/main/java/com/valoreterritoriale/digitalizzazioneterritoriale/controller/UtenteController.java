@@ -6,11 +6,11 @@ import com.valoreterritoriale.digitalizzazioneterritoriale.dto.UtenteCrea;
 import com.valoreterritoriale.digitalizzazioneterritoriale.model.Utente;
 import com.valoreterritoriale.digitalizzazioneterritoriale.service.EmailService;
 import com.valoreterritoriale.digitalizzazioneterritoriale.service.UtenteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -30,6 +30,7 @@ public class UtenteController extends AbstractController {
      * @param utenteService servizio per la gestione degli utenti.
      * @param emailService servizio per l'invio di email.
      */
+    @Autowired
     public UtenteController(UtenteService utenteService, EmailService emailService) {
         this.utenteService = utenteService;
         this.emailService = emailService;
@@ -83,12 +84,12 @@ public class UtenteController extends AbstractController {
     /**
      * Metodo per inviare una richiesta di modifica del ruolo.
      * @param richiestaModificaRuolo oggetto RichiestaModificaRuolo contenente i dettagli della richiesta.
+     * @param authentication oggetto Authentication che rappresenta l'autenticazione dell'utente.
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PostMapping("/richiediModificaRuolo")
-    public ResponseEntity<String> richiediModificaRuolo(@RequestBody RichiestaModificaRuolo richiestaModificaRuolo) {
+    public ResponseEntity<String> richiediModificaRuolo(@RequestBody RichiestaModificaRuolo richiestaModificaRuolo, Authentication authentication) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
 
             emailService.sendRuoloModificaEmail(username, richiestaModificaRuolo);
@@ -111,12 +112,12 @@ public class UtenteController extends AbstractController {
     }
 
     @Override
-    protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
+    protected ResponseEntity<?> read(Long id, Authentication authentication) {
         Utente utente = utenteService.visualizzaUtente(id);
         if (utente != null) {
-            return (ResponseEntity<T>) createObjectResponse(utente);
+            return createObjectResponse(utente);
         } else {
-            return (ResponseEntity<T>) createErrorResponse("Utente non trovato", HttpStatus.NOT_FOUND);
+            return createErrorResponse("Utente non trovato", HttpStatus.NOT_FOUND);
         }
     }
 

@@ -2,9 +2,14 @@ package com.valoreterritoriale.digitalizzazioneterritoriale.repository;
 
 import com.valoreterritoriale.digitalizzazioneterritoriale.model.Partecipazione;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository per la gestione delle partecipazioni.
+ */
+@Repository
 public interface PartecipazioneRepository extends JpaRepository<Partecipazione, Long> {
 
     /**

@@ -2,12 +2,14 @@ package com.valoreterritoriale.digitalizzazioneterritoriale.repository;
 
 import com.valoreterritoriale.digitalizzazioneterritoriale.model.PuntoDiInteresse;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Repository per la gestione dei punti di interesse.
  */
+@Repository
 public interface PuntoDiInteresseRepository extends JpaRepository<PuntoDiInteresse, Long> {
 
     /**

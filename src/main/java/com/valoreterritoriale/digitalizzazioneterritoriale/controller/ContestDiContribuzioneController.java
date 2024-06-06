@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,11 +51,12 @@ public class ContestDiContribuzioneController extends AbstractController {
      * Endpoint per la creazione di un contest di contribuzione.
      *
      * @param contestDiContribuzioneDTO Oggetto che contiene i dati per la creazione del contest.
+     * @param authentication oggetto Authentication che rappresenta l'autenticazione dell'utente.
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PostMapping("/crea")
-    public ResponseEntity<?> creaContestDiContribuzione(@RequestBody ContestDiContribuzioneCrea contestDiContribuzioneDTO) {
-        return create(contestDiContribuzioneDTO, SecurityContextHolder.getContext().getAuthentication());
+    public ResponseEntity<?> creaContestDiContribuzione(@RequestBody ContestDiContribuzioneCrea contestDiContribuzioneDTO, Authentication authentication) {
+        return create(contestDiContribuzioneDTO, authentication);
     }
 
     @Override
@@ -113,15 +113,17 @@ public class ContestDiContribuzioneController extends AbstractController {
      * @param contestId Identificativo del contest.
      * @param codicePartecipazione Codice necessario per partecipare.
      * @param file File opzionale contenente materiale per il contest.
+     * @param authentication Oggetto Authentication che rappresenta l'autenticazione dell'utente.
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PostMapping("/partecipaAlContest")
     public ResponseEntity<String> partecipaAlContest(
             @RequestParam("contestId") Long contestId,
             @RequestParam("codicePartecipazione") String codicePartecipazione,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            Authentication authentication) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            // Usa l'oggetto Authentication passato come parametro
             Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
                     .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
 
@@ -183,10 +185,14 @@ public class ContestDiContribuzioneController extends AbstractController {
     }
 
     @Override
-    protected ResponseEntity<ContestDiContribuzione> read(Long id, Authentication authentication) {
-        return contestService.trovaContestDiContribuzionePerId(id)
-                .map(this::createObjectResponse)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+    protected ResponseEntity<?> read(Long id, Authentication authentication) {
+        ContestDiContribuzione contest = contestService.trovaContestDiContribuzionePerId(id)
+                .orElse(null);
+        if (contest != null) {
+            return createObjectResponse(contest);
+        } else {
+            return createErrorResponse("Contest con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
+        }
     }
 
     /**

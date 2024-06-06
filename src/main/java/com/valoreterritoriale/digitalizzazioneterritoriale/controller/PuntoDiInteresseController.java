@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -42,11 +42,12 @@ public class PuntoDiInteresseController extends AbstractController {
     /**
      * Metodo per creare un nuovo punto di interesse.
      * @param puntoDiInteresseDTO oggetto DTO per la creazione di un punto di interesse.
+     * @param authentication oggetto Authentication che rappresenta l'autenticazione dell'utente.
      * @return ResponseEntity con il risultato dell'operazione.
      */
     @PostMapping("/crea")
-    public ResponseEntity<String> creaPuntoDiInteresse(@RequestBody PuntoDiInteresseCrea puntoDiInteresseDTO) {
-        return (ResponseEntity<String>) create(puntoDiInteresseDTO, SecurityContextHolder.getContext().getAuthentication());
+    public ResponseEntity<String> creaPuntoDiInteresse(@RequestBody PuntoDiInteresseCrea puntoDiInteresseDTO, Authentication authentication) {
+        return (ResponseEntity<String>) create(puntoDiInteresseDTO, authentication);
     }
 
     @Override
@@ -72,8 +73,6 @@ public class PuntoDiInteresseController extends AbstractController {
             return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
         }
     }
-
-
 
     /**
      * Metodo per cancellare un punto di interesse dato il suo ID.
@@ -118,16 +117,16 @@ public class PuntoDiInteresseController extends AbstractController {
     }
 
     @Override
-    protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
+    protected ResponseEntity<?> read(Long id, Authentication authentication) {
         PuntoDiInteresse puntoDiInteresse = puntoDiInteresseService.visualizzaPuntoDiInteresseById(id);
         if (puntoDiInteresse != null) {
             if (!puntoDiInteresse.isPending()) {
-                return (ResponseEntity<T>) ResponseEntity.ok(puntoDiInteresse);
+                return createObjectResponse(puntoDiInteresse);
             } else {
-                return (ResponseEntity<T>) createErrorResponse("Punto di interesse con ID " + id + " è in attesa di approvazione.", HttpStatus.NOT_FOUND);
+                return createErrorResponse("Punto di interesse con ID " + id + " è in attesa di approvazione.", HttpStatus.NOT_FOUND);
             }
         } else {
-            return (ResponseEntity<T>) createErrorResponse("Punto di interesse con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
+            return createErrorResponse("Punto di interesse con ID " + id + " non trovato.", HttpStatus.NOT_FOUND);
         }
     }
 
