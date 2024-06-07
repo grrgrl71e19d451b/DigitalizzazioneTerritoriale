@@ -59,6 +59,30 @@ public class PreferitiController extends AbstractController {
         }
     }
 
+    /**
+     * Metodo template per gestire il prelievo di una risorsa.
+     *
+     * @param id Identificativo della risorsa da prelevare.
+     * @param authentication Informazioni sull'autenticazione dell'utente.
+     * @return ResponseEntity che incapsula l'oggetto prelevato o un messaggio di errore.
+     */
+    @Override
+    protected ResponseEntity<?> read(Long id, Authentication authentication) {
+        return null;
+    }
+
+    /**
+     * Metodo template per gestire l'aggiornamento di una risorsa.
+     *
+     * @param id Identificativo della risorsa da aggiornare.
+     * @param request Oggetto della richiesta contenente i dati aggiornati.
+     * @param authentication Informazioni sull'autenticazione dell'utente.
+     * @return ResponseEntity che incapsula l'esito dell'operazione di aggiornamento.
+     */
+    @Override
+    protected ResponseEntity<?> update(Long id, Object request, Authentication authentication) {
+        return null;
+    }
 
     /**
      * Rimuove un itinerario dai preferiti dell'utente.
@@ -106,26 +130,4 @@ public class PreferitiController extends AbstractController {
         }
     }
 
-    /**
-     * Questo metodo non è attualmente implementato, ma è disponibile per future estensioni.
-     * @param id Identificativo della risorsa da leggere.
-     * @param authentication Informazioni sull'autenticazione dell'utente.
-     * @return ResponseEntity che incapsula l'esito dell'operazione di lettura.
-     */
-    @Override
-    protected <T> ResponseEntity<T> read(Long id, Authentication authentication) {
-        return null;
-    }
-
-    /**
-     * Questo metodo non è attualmente implementato, ma è disponibile per future estensioni.
-     * @param id Identificativo della risorsa da aggiornare.
-     * @param request Oggetto della richiesta contenente i dati aggiornati.
-     * @param authentication Informazioni sull'autenticazione dell'utente.
-     * @return ResponseEntity che incapsula l'esito dell'operazione di aggiornamento.
-     */
-    @Override
-    protected <T> ResponseEntity<T> update(Long id, Object request, Authentication authentication) {
-        return null;
-    }
 }

@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Set;
 
 /**
  * Servizio per la gestione degli utenti nel contesto della sicurezza di Spring.
@@ -96,7 +95,7 @@ public class UtenteService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Utente utente = utenteRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Utente non trovato: " + username));
-        Set<GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + utente.getRuolo()));
-        return new User(utente.getUsername(), utente.getPassword(), authorities);
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + utente.getRuolo());
+        return new User(utente.getUsername(), utente.getPassword(), Collections.singleton(authority));
     }
 }

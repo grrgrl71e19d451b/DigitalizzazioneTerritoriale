@@ -92,11 +92,9 @@ public class ItinerarioService {
         Itinerario itinerario = itinerarioRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Itinerario non trovato"));
 
-        // Rimuovi tutte le associazioni tra l'itinerario e i punti di interesse
         itinerario.getPuntiDiInteresse().clear();
         itinerarioRepository.save(itinerario);
 
-        // Ora puoi eliminare l'itinerario senza problemi
         itinerarioRepository.deleteById(id);
         return true;
     }

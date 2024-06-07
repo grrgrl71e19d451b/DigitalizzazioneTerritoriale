@@ -19,38 +19,34 @@ public abstract class AbstractController {
      * Metodo template per gestire la creazione di una risorsa.
      * @param request Oggetto della richiesta.
      * @param authentication Informazioni sull'autenticazione dell'utente.
-     * @param <T> Tipo di oggetto della risposta.
      * @return ResponseEntity che incapsula l'esito dell'operazione di creazione.
      */
-    protected abstract <T> ResponseEntity<T> create(Object request, Authentication authentication);
+    protected abstract ResponseEntity<?> create(Object request, Authentication authentication);
 
     /**
      * Metodo template per gestire il prelievo di una risorsa.
      * @param id Identificativo della risorsa da prelevare.
      * @param authentication Informazioni sull'autenticazione dell'utente.
-     * @param <T> Tipo di oggetto della risposta.
      * @return ResponseEntity che incapsula l'oggetto prelevato o un messaggio di errore.
      */
-    protected abstract <T> ResponseEntity<T> read(Long id, Authentication authentication);
+    protected abstract ResponseEntity<?> read(Long id, Authentication authentication);
 
     /**
      * Metodo template per gestire l'aggiornamento di una risorsa.
      * @param id Identificativo della risorsa da aggiornare.
      * @param request Oggetto della richiesta contenente i dati aggiornati.
      * @param authentication Informazioni sull'autenticazione dell'utente.
-     * @param <T> Tipo di oggetto della risposta.
      * @return ResponseEntity che incapsula l'esito dell'operazione di aggiornamento.
      */
-    protected abstract <T> ResponseEntity<T> update(Long id, Object request, Authentication authentication);
+    protected abstract ResponseEntity<?> update(Long id, Object request, Authentication authentication);
 
     /**
      * Metodo template per gestire la cancellazione di una risorsa.
      * @param id Identificativo della risorsa da cancellare.
      * @param authentication Informazioni sull'autenticazione dell'utente.
-     * @param <T> Tipo di oggetto della risposta.
      * @return ResponseEntity che incapsula l'esito dell'operazione di cancellazione.
      */
-    protected abstract <T> ResponseEntity<T> delete(Long id, Authentication authentication);
+    protected abstract ResponseEntity<?> delete(Long id, Authentication authentication);
 
     /**
      * Crea una ResponseEntity con il corpo e lo status specificati.

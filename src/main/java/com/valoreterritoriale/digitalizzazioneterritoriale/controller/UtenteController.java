@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
 
 /**
  * Controller per la gestione degli utenti.
@@ -61,8 +60,9 @@ public class UtenteController extends AbstractController {
 
         if (authentication != null && authentication.isAuthenticated()) {
             String ruoloAutenticato = authentication.getAuthorities().stream()
+                    .findFirst()
                     .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.joining());
+                    .orElse("");
 
             if (ruoloAutenticato.contains("GESTOREPIATTAFORMA")) {
                 utente.setRuolo(utenteCrea.getRuolo());
@@ -149,7 +149,6 @@ public class UtenteController extends AbstractController {
      * @param authentication informazioni sull'autenticazione dell'utente.
      * @return ResponseEntity con il risultato dell'operazione.
      */
-
     @DeleteMapping("/cancella/{id}")
     public ResponseEntity<String> cancellaUtente(@PathVariable Long id, Authentication authentication) {
         return delete(id, authentication);
@@ -160,8 +159,9 @@ public class UtenteController extends AbstractController {
         try {
             if (authentication != null && authentication.isAuthenticated()) {
                 String ruoloAutenticato = authentication.getAuthorities().stream()
+                        .findFirst()
                         .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining());
+                        .orElse("");
 
                 if (ruoloAutenticato.contains("GESTOREPIATTAFORMA")) {
                     boolean isDeleted = utenteService.cancellaUtente(id);
@@ -180,4 +180,5 @@ public class UtenteController extends AbstractController {
             return createErrorResponse("Si è verificato un errore durante la cancellazione dell'utente.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

@@ -123,7 +123,6 @@ public class ContestDiContribuzioneController extends AbstractController {
             @RequestPart(value = "file", required = false) MultipartFile file,
             Authentication authentication) {
         try {
-            // Usa l'oggetto Authentication passato come parametro
             Utente utenteAutenticato = utenteRepository.findByUsername(authentication.getName())
                     .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
 
@@ -196,6 +195,19 @@ public class ContestDiContribuzioneController extends AbstractController {
     }
 
     /**
+     * Metodo template per gestire l'aggiornamento di una risorsa.
+     *
+     * @param id Identificativo della risorsa da aggiornare.
+     * @param request Oggetto della richiesta contenente i dati aggiornati.
+     * @param authentication Informazioni sull'autenticazione dell'utente.
+     * @return ResponseEntity che incapsula l'esito dell'operazione di aggiornamento.
+     */
+    @Override
+    protected ResponseEntity<?> update(Long id, Object request, Authentication authentication) {
+        return null;
+    }
+
+    /**
      * Endpoint per cancellare un contest di contribuzione.
      *
      * @param id Identificativo del contest da cancellare.
@@ -222,15 +234,4 @@ public class ContestDiContribuzioneController extends AbstractController {
         }
     }
 
-    /**
-     * Questo metodo non è attualmente implementato, ma è disponibile per future estensioni.
-     * @param id Identificativo della risorsa da aggiornare.
-     * @param request Oggetto della richiesta contenente i dati aggiornati.
-     * @param authentication Informazioni sull'autenticazione dell'utente.
-     * @return ResponseEntity che incapsula l'esito dell'operazione di aggiornamento.
-     */
-    @Override
-    protected <T> ResponseEntity<T> update(Long id, Object request, Authentication authentication) {
-        return null;
-    }
 }

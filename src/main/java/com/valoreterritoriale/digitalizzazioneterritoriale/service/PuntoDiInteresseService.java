@@ -19,7 +19,7 @@ import java.util.List;
 public class PuntoDiInteresseService {
 
     private final PuntoDiInteresseRepository puntoDiInteresseRepository;
-    private final UtenteRepository utenteRepository;  // Assicurati che questo repository sia iniettato
+    private final UtenteRepository utenteRepository;
 
     /**
      * Costruttore per iniezione delle dipendenze necessarie per la gestione dei punti di interesse.
@@ -30,7 +30,7 @@ public class PuntoDiInteresseService {
     @Autowired
     public PuntoDiInteresseService(PuntoDiInteresseRepository puntoDiInteresseRepository, UtenteRepository utenteRepository) {
         this.puntoDiInteresseRepository = puntoDiInteresseRepository;
-        this.utenteRepository = utenteRepository;  // Iniezione tramite costruttore
+        this.utenteRepository = utenteRepository;
     }
 
     /**
@@ -69,7 +69,7 @@ public class PuntoDiInteresseService {
         puntoDiInteresse.setPending(puntoDiInteresseDTO.isPending());
         puntoDiInteresse.setLatitudine(puntoDiInteresseDTO.getLatitudine());
         puntoDiInteresse.setLongitudine(puntoDiInteresseDTO.getLongitudine());
-        puntoDiInteresse.setCreatore(creatore);  // Imposta il creatore
+        puntoDiInteresse.setCreatore(creatore);
         return puntoDiInteresse;
     }
 

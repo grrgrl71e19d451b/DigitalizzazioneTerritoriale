@@ -29,5 +29,5 @@ public class PuntoDiInteresse {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "creatore_id")
-    private Utente creatore;  // Collegamento a Utente
+    private Utente creatore;
 }

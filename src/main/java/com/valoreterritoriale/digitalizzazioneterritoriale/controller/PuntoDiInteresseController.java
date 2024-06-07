@@ -100,7 +100,6 @@ public class PuntoDiInteresseController extends AbstractController {
                 return createErrorResponse("Non autenticato", HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception ex) {
-            // Gestisce qualsiasi eccezione lanciata dal service
             return createErrorResponse("Si è verificato un errore durante la cancellazione del punto di interesse.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
